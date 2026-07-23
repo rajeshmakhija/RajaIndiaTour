@@ -1,0 +1,17 @@
+/node_modules
+/.next/
+/out/
+/build
+.DS_Store
+*.pem
+npm-debug.log*
+.env*.local
+.env
+.vercel
+*.tsbuildinfo
+.gstack/
+
+# Generated blog drafts are local state, not source
+/content/blog/
+
+.claude/

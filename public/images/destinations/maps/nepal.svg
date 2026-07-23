@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1000" viewBox="0 0 1400 1000">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#e8eef6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1400" height="1000" fill="url(#bg)"/>
+  <text x="56" y="64" font-family="Georgia, serif" font-size="40" font-weight="700" fill="#003d75">Carte du Népal</text>
+  <text x="56" y="98" font-family="Arial, sans-serif" font-size="18" fill="#4d4d4d">Kathmandou · Pokhara · Chitwan</text>
+
+  <!-- India simplified outline -->
+  <path d="M520 90 L580 70 L650 95 L700 140 L740 200 L770 280 L790 360 L800 450 L790 540 L760 620 L720 700 L670 780 L610 850 L540 900 L470 880 L410 820 L360 740 L320 660 L290 580 L270 500 L260 420 L270 340 L300 260 L350 190 L410 130 L470 100 Z"
+        fill="#c5d4e8" stroke="#003d75" stroke-width="3"/>
+
+  <!-- Highlight region -->
+  <rect x="700" y="140" width="220" height="120" rx="18" fill="#9e1449" fill-opacity="0.82" stroke="#6e0e32" stroke-width="3"/>
+
+      <g>
+      <circle cx="760" cy="180" r="7" fill="#9e1449" stroke="#fff" stroke-width="2"/>
+      <text x="772" y="185" font-family="Georgia, serif" font-size="16" font-weight="700" fill="#1a1a1a">Kathmandou</text>
+    </g>
+    <g>
+      <circle cx="820" cy="200" r="7" fill="#9e1449" stroke="#fff" stroke-width="2"/>
+      <text x="832" y="205" font-family="Georgia, serif" font-size="16" font-weight="700" fill="#1a1a1a">Pokhara</text>
+    </g>
+    <g>
+      <circle cx="860" cy="220" r="7" fill="#9e1449" stroke="#fff" stroke-width="2"/>
+      <text x="872" y="225" font-family="Georgia, serif" font-size="16" font-weight="700" fill="#1a1a1a">Chitwan</text>
+    </g>
+
+  <!-- Legend -->
+  <rect x="56" y="920" width="22" height="22" rx="4" fill="#9e1449"/>
+  <text x="90" y="938" font-family="Arial" font-size="16" fill="#2d2d2d">Zone du voyage</text>
+  <rect x="280" y="920" width="22" height="22" rx="4" fill="#c5d4e8" stroke="#003d75" stroke-width="2"/>
+  <text x="314" y="938" font-family="Arial" font-size="16" fill="#2d2d2d">Inde</text>
+  <circle cx="430" cy="931" r="7" fill="#9e1449" stroke="#fff" stroke-width="2"/>
+  <text x="448" y="938" font-family="Arial" font-size="16" fill="#2d2d2d">Villes à explorer</text>
+  <text x="56" y="975" font-family="Arial" font-size="13" fill="#6b6560">Carte indicative — Raja India Tour · Pour situer la région et ses étapes</text>
+</svg>
