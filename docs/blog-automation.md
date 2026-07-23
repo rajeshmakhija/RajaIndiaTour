@@ -80,10 +80,13 @@ Ces règles réduisent le risque sans le supprimer : **relisez toujours avant de
 
 ## Hébergement — à savoir
 
-Le stockage est **sur disque** (`content/blog/`). Cela fonctionne en local et sur
-tout serveur Node persistant (VPS, cPanel Node).
+**En local** : stockage sur disque (`content/blog/`).
 
-**Sur Vercel, le système de fichiers est en lecture seule** : la génération et la
-publication échoueront. Il faut alors remplacer les cinq fonctions de
-`lib/blog/store.ts` par un stockage externe (Vercel KV, Postgres, Supabase…) —
-c'est le seul fichier à réécrire, tout le reste passe par lui.
+**Sur Vercel** : le disque est en lecture seule. Le store utilise **Vercel Blob**
+quand `BLOB_READ_WRITE_TOKEN` est défini.
+
+1. Vercel Dashboard → **Storage** → **Blob** → Create
+2. Connectez le store au projet (ajoute `BLOB_READ_WRITE_TOKEN` automatiquement)
+3. Redéployez
+
+Sans ce jeton, `/admin/blog` s'ouvre mais génération / publication échouent.

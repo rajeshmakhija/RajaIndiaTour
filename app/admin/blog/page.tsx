@@ -32,7 +32,16 @@ export default async function BlogAdminPage() {
     return <AdminLogin />;
   }
 
-  const [posts, hiddenSlugs] = await Promise.all([listPosts(), getHiddenSlugs()]);
+  let posts: Awaited<ReturnType<typeof listPosts>> = [];
+  let hiddenSlugs: string[] = [];
+  try {
+    [posts, hiddenSlugs] = await Promise.all([listPosts(), getHiddenSlugs()]);
+  } catch {
+    // Storage misconfigured (e.g. Vercel without Blob) — still show the admin UI.
+    posts = [];
+    hiddenSlugs = [];
+  }
+
   return (
     <BlogAdmin
       initialPosts={posts}
