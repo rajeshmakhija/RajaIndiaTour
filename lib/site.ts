@@ -1,7 +1,8 @@
 export const siteConfig = {
   name: "Raja India Tour",
-  domain: "rajaindiatour.fr",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://rajaindiatour.fr",
+  domain: "www.rajaindiatour.fr",
+  // Canonical host is www (apex redirects with 308). Must match Search Console property.
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.rajaindiatour.fr",
   locale: "fr-FR",
   email: process.env.CONTACT_EMAIL ?? "rajeshmakhija07@gmail.com",
   phone: process.env.NEXT_PUBLIC_PHONE ?? "0091-9868607853",
