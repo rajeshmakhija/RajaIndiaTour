@@ -83,10 +83,11 @@ Ces règles réduisent le risque sans le supprimer : **relisez toujours avant de
 **En local** : stockage sur disque (`content/blog/`).
 
 **Sur Vercel** : le disque est en lecture seule. Le store utilise **Vercel Blob**
-quand `BLOB_READ_WRITE_TOKEN` est défini.
+(store **privé**) quand `BLOB_READ_WRITE_TOKEN` est défini.
 
-1. Vercel Dashboard → **Storage** → **Blob** → Create
+1. Vercel Dashboard → **Storage** → **Blob** → Create (**Private**)
 2. Connectez le store au projet (ajoute `BLOB_READ_WRITE_TOKEN` automatiquement)
 3. Redéployez
 
 Sans ce jeton, `/admin/blog` s'ouvre mais génération / publication échouent.
+Gardez le store en **Private** — le code lit/écrit via le SDK authentifié.

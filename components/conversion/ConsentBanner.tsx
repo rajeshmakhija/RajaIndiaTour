@@ -45,10 +45,13 @@ export function ConsentBanner() {
     >
       <div className="mx-auto flex max-w-6xl flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-8">
         <div className="max-w-2xl">
-          <p className="text-sm font-semibold text-ink">Cookies & mesure d&apos;audience</p>
+          <p className="text-sm font-semibold text-ink">Confidentialité et cookies</p>
           <p className="mt-1 text-sm leading-relaxed text-muted">
-            Nous utilisons des cookies pour mesurer l&apos;audience (Google Analytics) et améliorer
-            nos campagnes. Aucun suivi n&apos;est activé tant que vous n&apos;avez pas accepté.
+            Ce site utilise des cookies et des technologies similaires afin d&apos;établir des
+            statistiques de fréquentation et d&apos;optimiser nos actions marketing, dans le respect
+            de la réglementation applicable. Ces traitements ne sont activés qu&apos;après votre
+            consentement explicite. Vous pouvez accepter ou refuser ; votre choix pourra être modifié
+            ultérieurement.
           </p>
         </div>
         <div className="flex shrink-0 flex-col gap-2 sm:flex-row">

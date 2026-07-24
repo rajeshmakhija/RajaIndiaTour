@@ -1,12 +1,12 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { del, list, put } from "@vercel/blob";
+import { del, get, list, put } from "@vercel/blob";
 import type { GeneratedPost, PostEdit } from "@/lib/blog/types";
 
 /**
  * Blog post store.
  *
- * - With BLOB_READ_WRITE_TOKEN (Vercel Blob): persistent cloud storage — required on Vercel.
+ * - With BLOB_READ_WRITE_TOKEN (Vercel Blob, private store): persistent cloud storage.
  * - Without it (local/dev): content/blog/ on disk.
  *
  * This is the only module that knows *where* posts live.
@@ -17,6 +17,9 @@ const FS_HIDDEN = path.join(FS_DIR, "_hidden.json");
 
 const BLOB_PREFIX = "blog/posts/";
 const BLOB_HIDDEN = "blog/_hidden.json";
+
+/** Private Blob store — must match the store access mode in Vercel. */
+const BLOB_ACCESS = "private" as const;
 
 function useBlob(): boolean {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
@@ -41,7 +44,6 @@ async function ensureFsDir(): Promise<boolean> {
     return true;
   } catch (err) {
     const code = (err as NodeJS.ErrnoException).code;
-    // Vercel / read-only hosts: cannot create directories under /var/task
     if (code === "ENOENT" || code === "EACCES" || code === "EROFS" || code === "EPERM") {
       return false;
     }
@@ -56,20 +58,25 @@ function storageHint(): string {
   );
 }
 
-async function fetchJson<T>(url: string): Promise<T | null> {
+/** Read JSON from a private blob by pathname (authenticated via token). */
+async function readBlobJson<T>(pathname: string): Promise<T | null> {
   try {
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) return null;
-    return (await res.json()) as T;
+    const result = await get(pathname, { access: BLOB_ACCESS, useCache: false });
+    if (!result || result.statusCode !== 200 || !result.stream) return null;
+    const text = await new Response(result.stream).text();
+    return JSON.parse(text) as T;
   } catch {
     return null;
   }
 }
 
-async function findBlobUrl(pathname: string): Promise<string | null> {
-  const { blobs } = await list({ prefix: pathname, limit: 10 });
-  const exact = blobs.find((b) => b.pathname === pathname);
-  return exact?.url ?? blobs[0]?.url ?? null;
+async function putBlobJson(pathname: string, body: string): Promise<void> {
+  await put(pathname, body, {
+    access: BLOB_ACCESS,
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    contentType: "application/json",
+  });
 }
 
 /* ---------- list / get ---------- */
@@ -80,7 +87,7 @@ export async function listPosts(): Promise<GeneratedPost[]> {
     const posts = await Promise.all(
       blobs
         .filter((b) => b.pathname.endsWith(".json") && !b.pathname.includes("/_"))
-        .map(async (b) => fetchJson<GeneratedPost>(b.url)),
+        .map(async (b) => readBlobJson<GeneratedPost>(b.pathname)),
     );
     return posts
       .filter((p): p is GeneratedPost => p !== null && typeof p.slug === "string")
@@ -115,9 +122,7 @@ export async function getPost(slug: string): Promise<GeneratedPost | null> {
   if (!isValidSlug(slug)) return null;
 
   if (useBlob()) {
-    const url = await findBlobUrl(blobPath(slug));
-    if (!url) return null;
-    return fetchJson<GeneratedPost>(url);
+    return readBlobJson<GeneratedPost>(blobPath(slug));
   }
 
   try {
@@ -134,12 +139,7 @@ export async function savePost(post: GeneratedPost): Promise<GeneratedPost> {
   const body = JSON.stringify(post, null, 2);
 
   if (useBlob()) {
-    await put(blobPath(post.slug), body, {
-      access: "public",
-      addRandomSuffix: false,
-      allowOverwrite: true,
-      contentType: "application/json",
-    });
+    await putBlobJson(blobPath(post.slug), body);
     return post;
   }
 
@@ -165,10 +165,12 @@ export async function deletePost(slug: string): Promise<boolean> {
   if (!isValidSlug(slug)) return false;
 
   if (useBlob()) {
-    const url = await findBlobUrl(blobPath(slug));
-    if (!url) return false;
-    await del(url);
-    return true;
+    try {
+      await del(blobPath(slug));
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   try {
@@ -188,9 +190,7 @@ export async function listPublished(): Promise<GeneratedPost[]> {
 
 export async function getHiddenSlugs(): Promise<string[]> {
   if (useBlob()) {
-    const url = await findBlobUrl(BLOB_HIDDEN);
-    if (!url) return [];
-    const parsed = await fetchJson<unknown>(url);
+    const parsed = await readBlobJson<unknown>(BLOB_HIDDEN);
     return Array.isArray(parsed) ? parsed.filter((s): s is string => typeof s === "string") : [];
   }
 
@@ -211,12 +211,7 @@ export async function setHidden(slug: string, hidden: boolean): Promise<string[]
   const body = JSON.stringify(next, null, 2);
 
   if (useBlob()) {
-    await put(BLOB_HIDDEN, body, {
-      access: "public",
-      addRandomSuffix: false,
-      allowOverwrite: true,
-      contentType: "application/json",
-    });
+    await putBlobJson(BLOB_HIDDEN, body);
     return next;
   }
 
