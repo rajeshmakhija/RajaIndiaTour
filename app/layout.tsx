@@ -4,6 +4,7 @@ import { Playfair_Display, DM_Sans } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { DeferredWidgets } from "@/components/conversion/DeferredWidgets";
+import { ConsentBanner } from "@/components/conversion/ConsentBanner";
 import { JsonLd } from "@/components/ui";
 import { createMetadata } from "@/lib/seo/metadata";
 import { organizationSchema, websiteSchema } from "@/lib/seo/schema";
@@ -34,7 +35,32 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr">
       <head>
-        {/* Google Tag Manager — as high in <head> as possible */}
+        {/* 1. Consent Mode default — MUST stay above GTM */}
+        <Script id="google-consent-default" strategy="beforeInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('consent', 'default', {
+              'ad_storage': 'denied',
+              'analytics_storage': 'denied',
+              'ad_user_data': 'denied',
+              'ad_personalization': 'denied',
+              'wait_for_update': 500
+            });
+            try {
+              var c = localStorage.getItem('rit_cookie_consent');
+              if (c === 'granted' || c === 'denied') {
+                gtag('consent', 'update', {
+                  'ad_storage': c,
+                  'analytics_storage': c,
+                  'ad_user_data': c,
+                  'ad_personalization': c
+                });
+              }
+            } catch (e) {}
+          `}
+        </Script>
+        {/* 2. Google Tag Manager */}
         <Script id="google-tag-manager" strategy="beforeInteractive">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -73,6 +99,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <main>{children}</main>
         <Footer />
         <DeferredWidgets />
+        <ConsentBanner />
       </body>
     </html>
   );
