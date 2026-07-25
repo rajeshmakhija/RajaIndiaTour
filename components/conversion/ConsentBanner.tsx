@@ -31,6 +31,7 @@ export function ConsentBanner() {
       /* ignore */
     }
     updateConsent(choice);
+    window.dispatchEvent(new CustomEvent("rit-consent", { detail: choice }));
     setVisible(false);
   }
 

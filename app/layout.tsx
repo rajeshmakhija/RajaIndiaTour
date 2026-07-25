@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { DeferredWidgets } from "@/components/conversion/DeferredWidgets";
 import { ConsentBanner } from "@/components/conversion/ConsentBanner";
+import { MetaPixel } from "@/components/conversion/MetaPixel";
 import { JsonLd } from "@/components/ui";
 import { createMetadata } from "@/lib/seo/metadata";
 import { organizationSchema, websiteSchema } from "@/lib/seo/schema";
@@ -100,6 +101,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <Footer />
         <DeferredWidgets />
         <ConsentBanner />
+        <MetaPixel />
       </body>
     </html>
   );

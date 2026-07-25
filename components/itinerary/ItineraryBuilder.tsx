@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, type ReactNode } from "react";
 import Image from "next/image";
 import { Check, ChevronLeft, ChevronRight, Send, Sparkles } from "lucide-react";
+import { metaFormContext, trackMetaEvent } from "@/lib/meta/client";
 
 const STEPS = [
   { num: 1, title: "Vos centres d'intérêt" },
@@ -239,6 +240,13 @@ export function ItineraryBuilder() {
       setError("Choisissez au moins un type d'hébergement.");
       return;
     }
+    if (step === 1) {
+      const searchString = [
+        ...data.regions.map((id) => REGIONS.find((r) => r.id === id)?.label ?? id),
+        ...data.interests.map((id) => INTERESTS.find((i) => i.id === id)?.label ?? id),
+      ].join(" | ");
+      void trackMetaEvent("Search", { searchString });
+    }
     setError("");
     setStep((s) => Math.min(3, s + 1));
     keepFormInView();
@@ -261,6 +269,11 @@ export function ItineraryBuilder() {
     setSubmitting(true);
     setError("");
     try {
+      const meta = metaFormContext();
+      if (meta.marketingConsent) {
+        void trackMetaEvent("Lead", { email: data.email, eventId: meta.leadEventId });
+        void trackMetaEvent("Contact", { email: data.email, eventId: meta.contactEventId });
+      }
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -283,6 +296,7 @@ export function ItineraryBuilder() {
             .filter(Boolean)
             .join("\n\n"),
           source: "itineraire-sur-mesure",
+          meta,
         }),
       });
       if (!res.ok) throw new Error("Erreur");

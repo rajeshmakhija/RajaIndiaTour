@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui";
+import { metaFormContext, trackMetaEvent } from "@/lib/meta/client";
 
 export function ContactForm() {
   const [form, setForm] = useState({
@@ -20,10 +21,22 @@ export function ContactForm() {
     e.preventDefault();
     setStatus("loading");
     try {
+      const meta = metaFormContext();
+      // Browser Pixel (same event IDs as server CAPI for dedup)
+      if (meta.marketingConsent) {
+        void trackMetaEvent("Lead", { email: form.email, eventId: meta.leadEventId });
+        void trackMetaEvent("Contact", { email: form.email, eventId: meta.contactEventId });
+        if (form.destination.trim()) {
+          void trackMetaEvent("Search", {
+            email: form.email,
+            searchString: form.destination.trim(),
+          });
+        }
+      }
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, source: "contact-page" }),
+        body: JSON.stringify({ ...form, source: "contact-page", meta }),
       });
       if (!res.ok) throw new Error();
       setStatus("done");
