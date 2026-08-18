@@ -834,6 +834,154 @@ export const tours: Tour[] = [
       },
     ],
   },
+  {
+    slug: "rajasthan-classique-12-jours",
+    breadcrumb: ["Asie", "Inde", "Rajasthan"],
+    title: "Rajasthan classique — 12 jours",
+    subtitle:
+      "De Delhi au Taj Mahal, par Mandawa, Bikaner, Jaisalmer, Jodhpur, Ranakpur, Udaipur, Pushkar et Jaipur : le grand tour du Rajasthan en douze jours.",
+    intro:
+      "Ce circuit trace la ligne complète du Rajasthan royal : la capitale, la « galerie d'art à ciel ouvert » du Shekhawati, les cités caravanières du désert du Thar, les palais des maharajas, les temples jaïns de Ranakpur, les lacs d'Udaipur, la ville sainte de Pushkar, la ville rose de Jaipur, et le Taj Mahal en apothéose. Vous êtes accompagné d'un guide francophone du premier au dernier jour — un itinéraire exemple, entièrement personnalisable avec Raja.",
+    gallery: [
+      "/images/destinations/pdf/taj-mahal.jpg",
+      "/images/destinations/pdf/udaipur-boat.jpg",
+      "/images/destinations/pdf/jaisalmer-gadisar.jpg",
+    ],
+    facts: {
+      tourType: "Circuit privé sur mesure",
+      duration: "12 jours / 11 nuits",
+      group: "Voyage privé — vous et votre guide",
+      meals: "Petits-déjeuners quotidiens et dîners",
+      bestFor: "Palais, désert & Taj Mahal",
+      price: "Sur devis — sans intermédiaire",
+    },
+    highlights: [
+      {
+        title: "Le Taj Mahal au petit matin",
+        description:
+          "Le mausolée de marbre blanc élevé par Shah Jahan pour son épouse Mumtaz Mahal, découvert dans la lumière douce du matin — le point d'orgue du voyage.",
+        image: "/images/destinations/pdf/taj-mahal.jpg",
+      },
+      {
+        title: "Coucher de soleil à dos de chameau dans le Thar",
+        description:
+          "Balade dans les dunes autour de Jaisalmer pour admirer le soleil descendre sur le désert, puis danses folkloriques et dîner sous les étoiles.",
+        image: "/images/destinations/pdf/jaisalmer-gadisar.jpg",
+      },
+      {
+        title: "Barque au crépuscule sur le lac Pichola",
+        description:
+          "À Udaipur, glissez sur l'eau face au City Palace et au Lake Palace pour le moment le plus romantique du Rajasthan.",
+        image: "/images/destinations/pdf/udaipur-boat.jpg",
+      },
+      {
+        title: "Le temple jaïn de Ranakpur",
+        description:
+          "Un sanctuaire de marbre blanc dédié à Adinath, dont les vingt-neuf salles sont soutenues par mille quatre cent quarante-quatre colonnes toutes différentes.",
+        image: "/images/destinations/pdf/ranakpur-temple.jpg",
+      },
+    ],
+    mapImage: "/images/destinations/maps/rajasthan-itinerary.png",
+    cities: [
+      "Delhi",
+      "Mandawa",
+      "Bikaner",
+      "Jaisalmer",
+      "Jodhpur",
+      "Ranakpur",
+      "Udaipur",
+      "Pushkar",
+      "Jaipur",
+      "Fatehpur Sikri",
+      "Agra",
+    ],
+    days: [
+      {
+        day: 1,
+        title: "Arrivée à Delhi",
+        description:
+          "Accueil à l'aéroport international de Delhi par votre guide francophone et transfert à l'hôtel. Repos et installation. Nuit à l'hôtel.",
+        image: "/images/destinations/pdf/delhi-india-gate.jpg",
+      },
+      {
+        day: 2,
+        title: "Delhi → Mandawa (265 km, environ 6 h 30)",
+        description:
+          "Matinée consacrée à Delhi. Visite du Vieux Delhi : la Jama Masjid, plus grande mosquée d'Inde bâtie au XVIIe siècle, et passage devant le Fort Rouge. Recueillement au Raj Ghat, mémorial du Mahatma Gandhi. Tour d'orientation de New Delhi : l'India Gate, le Parlement, le palais présidentiel et le quartier des ambassades. Route vers le Shekhawati, porte d'entrée du Rajasthan et du désert du Thar, avec un arrêt dans une briqueterie traditionnelle. Nuit à l'hôtel.",
+        image: "/images/destinations/pdf/mandawa-haveli.jpg",
+      },
+      {
+        day: 3,
+        title: "Mandawa → Bikaner (200 km, environ 4 h)",
+        description:
+          "Visite de Mandawa, célèbre pour ses havelis — anciennes demeures de riches marchands marwaris — couverts de fresques colorées qui valent à la région le surnom de « galerie d'art à ciel ouvert ». Route ensuite vers Bikaner, aux portes du désert du Thar, sur l'ancienne route des caravanes. Nuit à l'hôtel.",
+        image: "/images/destinations/pdf/bikaner-junagarh.jpg",
+      },
+      {
+        day: 4,
+        title: "Bikaner → Jaisalmer (335 km, environ 5 h 30)",
+        description:
+          "Visite du fort de Junagarh, construit au XVIe siècle : cours et salles ornées de peintures fines, musée d'objets royaux. Balade en auto-rickshaw dans la vieille ville et son bazar animé. Route vers Jaisalmer, la « cité d'or », avec un arrêt en chemin au musée de la guerre de Jaisalmer. En fin de journée, visite du lac Gadisar — surnommé le « petit Varanasi » de Jaisalmer — et de Bada Bagh, cénotaphes royaux particulièrement évocateurs au crépuscule. Nuit à l'hôtel.",
+        image: "/images/destinations/pdf/jaisalmer-fort.jpg",
+      },
+      {
+        day: 5,
+        title: "Jaisalmer & désert du Thar",
+        description:
+          "Journée à Jaisalmer. Visite de la citadelle et de ses magnifiques temples jaïns, puis promenade dans les ruelles de la vieille ville pour découvrir les fameux havelis — Salim Singh ki Haveli, Nathmal ki Haveli, Patwon ki Haveli. En soirée, balade à dos de chameau dans les dunes de sable pour admirer le coucher de soleil sur le désert, avec possibilité de danses folkloriques et dîner traditionnel autour d'un feu de camp (en option). Nuit à l'hôtel.",
+        image: "/images/destinations/pdf/jaisalmer-gadisar.jpg",
+      },
+      {
+        day: 6,
+        title: "Jaisalmer → Jodhpur (285 km, environ 5 h)",
+        description:
+          "Route vers Jodhpur, la « ville bleue », avec un arrêt en chemin dans un village traditionnel du désert. À l'arrivée, visite du spectaculaire fort de Mehrangarh, dit « fort de l'aigle », aujourd'hui transformé en musée, puis du Jaswant Thada, mausolée de marbre blanc érigé par l'épouse du maharaja Jawant Singh. Flânerie dans la vieille ville et sur le célèbre Sardar Bazar autour de la tour de l'horloge. Nuit à l'hôtel.",
+        image: "/images/destinations/pdf/jodhpur-mehrangarh.jpg",
+      },
+      {
+        day: 7,
+        title: "Jodhpur → Ranakpur → Udaipur (270 km, environ 6 h)",
+        description:
+          "Route vers Ranakpur et visite du superbe temple jaïn en marbre blanc dédié à Adinath, fondateur du jaïnisme, aux mille quatre cent quarante-quatre colonnes toutes différentes. Continuation vers Udaipur, la « ville des lacs », avec en chemin un arrêt pour comprendre le mode d'irrigation traditionnel de la région (Rehat). Nuit à l'hôtel.",
+        image: "/images/destinations/pdf/ranakpur-temple.jpg",
+      },
+      {
+        day: 8,
+        title: "Udaipur",
+        description:
+          "Journée consacrée à Udaipur. Visite du City Palace, l'un des plus grands palais de l'Inde ; du temple Jagdish, sanctuaire de marbre blanc dédié à Vishnou ; du Saheliyon ki Bari, jardin des dames royales ; et d'un centre de peintures miniatures, spécialité locale. En fin d'après-midi, promenade en bateau sur le lac Pichola (sous réserve du niveau de l'eau) au pied des palais. Nuit à l'hôtel.",
+        image: "/images/destinations/pdf/udaipur-boat.jpg",
+      },
+      {
+        day: 9,
+        title: "Udaipur → Pushkar → Jaipur (environ 8 h)",
+        description:
+          "Longue route en direction de Pushkar. Visite du temple de Brahma — l'un des rares au monde dédié à cette divinité et important centre de pèlerinage pour les hindous et les jaïns. Promenade dans le marché coloré et au bord des ghats du lac sacré, où les pèlerins accomplissent leurs rituels avec l'aide d'un brahmane. Continuation vers Jaipur, la « ville rose », capitale du Rajasthan fondée au début du XVIIIe siècle. Nuit à l'hôtel.",
+        image: "/images/destinations/pdf/pushkar-lake.jpg",
+      },
+      {
+        day: 10,
+        title: "Jaipur — Amber, Hawa Mahal & Jantar Mantar",
+        description:
+          "Matinée au fort d'Amber, merveilleux exemple d'architecture rajpoute avec ses terrasses, ses cours et ses salles royales décorées d'ivoires, de peintures murales et d'éclats de miroir. Arrêt photo devant le Jal Mahal, palais posé au milieu de son lac. L'après-midi, visite du City Palace, résidence de la famille royale et musée, puis du Jantar Mantar, le plus grand observatoire de pierre et de marbre au monde, classé à l'UNESCO. Arrêt photo devant la façade rose du Hawa Mahal, le « palais des vents », avant une balade en pousse-pousse dans la ville rose. Nuit à l'hôtel.",
+        image: "/images/destinations/pdf/jaipur-hawa-mahal.jpg",
+      },
+      {
+        day: 11,
+        title: "Jaipur → Fatehpur Sikri → Agra (250 km, environ 5 h)",
+        description:
+          "Route vers Fatehpur Sikri, classée à l'UNESCO — l'ancienne capitale de l'empereur moghol Akbar au XVIe siècle, véritable ville de conte de fées dont les ruines de grès rouge sont restées presque intactes. Visite du palais, du tombeau du saint soufi et de la grande mosquée. Continuation vers Agra, sur les rives de la Yamuna. Nuit à l'hôtel.",
+        image: "/images/destinations/pdf/fatehpur-sikri.jpg",
+      },
+      {
+        day: 12,
+        title: "Agra → Delhi → vol retour",
+        description:
+          "Découverte du Taj Mahal (fermé le vendredi), lumineux mausolée de marbre blanc édifié par Shah Jahan en mémoire de son épouse Mumtaz Mahal — le plus beau poème d'amour gravé dans la pierre. Visite d'un atelier d'incrustation de pierres semi-précieuses, où se perpétue la technique du pietra dura utilisée sur le monument. Visite ensuite du Fort d'Agra (UNESCO), construit le long de la Yamuna, avec ses palais Diwan-e-Aam, Jahangir Mahal et Khas Mahal. Route vers Delhi et transfert à l'aéroport international pour votre vol retour.",
+        image: "/images/destinations/pdf/taj-mahal.jpg",
+      },
+    ],
+  },
 ];
 
 export function getTourBySlug(slug: string): Tour | undefined {
