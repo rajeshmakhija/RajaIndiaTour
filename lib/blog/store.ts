@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { del, get, list, put } from "@vercel/blob";
+import { BlobNotFoundError, BlobPreconditionFailedError, del, get, list, put } from "@vercel/blob";
 import type { GeneratedPost, PostEdit } from "@/lib/blog/types";
 
 /**
@@ -17,11 +17,12 @@ const FS_HIDDEN = path.join(FS_DIR, "_hidden.json");
 
 const BLOB_PREFIX = "blog/posts/";
 const BLOB_HIDDEN = "blog/_hidden.json";
+const BLOB_CRON_PREFIX = "blog/cron/";
 
 /** Private Blob store — must match the store access mode in Vercel. */
 const BLOB_ACCESS = "private" as const;
 
-function useBlob(): boolean {
+function hasBlobStorage(): boolean {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
 }
 
@@ -62,33 +63,73 @@ function storageHint(): string {
 async function readBlobJson<T>(pathname: string): Promise<T | null> {
   try {
     const result = await get(pathname, { access: BLOB_ACCESS, useCache: false });
-    if (!result || result.statusCode !== 200 || !result.stream) return null;
+    if (!result) return null;
+    if (result.statusCode !== 200 || !result.stream) {
+      throw new Error(`Blob read failed for ${pathname}: HTTP ${result.statusCode}`);
+    }
     const text = await new Response(result.stream).text();
     return JSON.parse(text) as T;
-  } catch {
-    return null;
+  } catch (error) {
+    if (error instanceof BlobNotFoundError) return null;
+    throw error;
   }
 }
 
-async function putBlobJson(pathname: string, body: string): Promise<void> {
+async function putBlobJson(pathname: string, body: string, overwrite = true): Promise<void> {
   await put(pathname, body, {
     access: BLOB_ACCESS,
     addRandomSuffix: false,
-    allowOverwrite: true,
+    allowOverwrite: overwrite,
     contentType: "application/json",
   });
+}
+
+/** Atomic once-per-UTC-day claim. A successful claim stays as an idempotency marker. */
+export async function claimPublicationDay(day: string): Promise<(() => Promise<void>) | null> {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) throw new Error("Invalid publication day");
+  if (hasBlobStorage()) {
+    const pathname = `${BLOB_CRON_PREFIX}${day}.json`;
+    try {
+      await putBlobJson(pathname, JSON.stringify({ day }), false);
+    } catch (error) {
+      if (error instanceof BlobPreconditionFailedError) return null;
+      throw error;
+    }
+    return async () => { await del(pathname); };
+  }
+
+  const ok = await ensureFsDir();
+  if (!ok) throw new Error(storageHint());
+  const pathname = path.join(FS_DIR, `_cron-${day}.json`);
+  try {
+    const handle = await fs.open(pathname, "wx");
+    try { await handle.writeFile(JSON.stringify({ day })); }
+    finally { await handle.close(); }
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "EEXIST") return null;
+    throw error;
+  }
+  return async () => { await fs.unlink(pathname); };
 }
 
 /* ---------- list / get ---------- */
 
 export async function listPosts(): Promise<GeneratedPost[]> {
-  if (useBlob()) {
-    const { blobs } = await list({ prefix: BLOB_PREFIX, limit: 1000 });
+  if (hasBlobStorage()) {
+    const blobs: { pathname: string }[] = [];
+    let cursor: string | undefined;
+    do {
+      const page = await list({ prefix: BLOB_PREFIX, limit: 1000, cursor });
+      blobs.push(...page.blobs);
+      if (page.hasMore && !page.cursor) throw new Error("Blob pagination cursor missing.");
+      cursor = page.hasMore ? page.cursor : undefined;
+    } while (cursor);
     const posts = await Promise.all(
       blobs
         .filter((b) => b.pathname.endsWith(".json") && !b.pathname.includes("/_"))
         .map(async (b) => readBlobJson<GeneratedPost>(b.pathname)),
     );
+    if (posts.some((post) => post === null)) throw new Error("Un article Blob a disparu pendant la lecture.");
     return posts
       .filter((p): p is GeneratedPost => p !== null && typeof p.slug === "string")
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
@@ -97,55 +138,42 @@ export async function listPosts(): Promise<GeneratedPost[]> {
   const ok = await ensureFsDir();
   if (!ok) return [];
 
-  try {
-    const files = await fs.readdir(FS_DIR);
-    const posts = await Promise.all(
-      files
-        .filter((f) => f.endsWith(".json") && !f.startsWith("_"))
-        .map(async (f) => {
-          try {
-            return JSON.parse(await fs.readFile(path.join(FS_DIR, f), "utf8")) as GeneratedPost;
-          } catch {
-            return null;
-          }
-        }),
-    );
-    return posts
-      .filter((p): p is GeneratedPost => p !== null)
-      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-  } catch {
-    return [];
-  }
+  const files = await fs.readdir(FS_DIR);
+  const posts = await Promise.all(files
+    .filter((f) => f.endsWith(".json") && !f.startsWith("_"))
+    .map(async (f) => JSON.parse(await fs.readFile(path.join(FS_DIR, f), "utf8")) as GeneratedPost));
+  return posts.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
 export async function getPost(slug: string): Promise<GeneratedPost | null> {
   if (!isValidSlug(slug)) return null;
 
-  if (useBlob()) {
+  if (hasBlobStorage()) {
     return readBlobJson<GeneratedPost>(blobPath(slug));
   }
 
   try {
     return JSON.parse(await fs.readFile(fileFor(slug), "utf8")) as GeneratedPost;
-  } catch {
-    return null;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return null;
+    throw error;
   }
 }
 
 /* ---------- write / delete ---------- */
 
-export async function savePost(post: GeneratedPost): Promise<GeneratedPost> {
+export async function savePost(post: GeneratedPost, overwrite = false): Promise<GeneratedPost> {
   if (!isValidSlug(post.slug)) throw new Error(`Slug invalide : ${post.slug}`);
   const body = JSON.stringify(post, null, 2);
 
-  if (useBlob()) {
-    await putBlobJson(blobPath(post.slug), body);
+  if (hasBlobStorage()) {
+    await putBlobJson(blobPath(post.slug), body, overwrite);
     return post;
   }
 
   const ok = await ensureFsDir();
   if (!ok) throw new Error(storageHint());
-  await fs.writeFile(fileFor(post.slug), body, "utf8");
+  await fs.writeFile(fileFor(post.slug), body, { encoding: "utf8", flag: overwrite ? "w" : "wx" });
   return post;
 }
 
@@ -158,13 +186,13 @@ export async function updatePost(slug: string, edit: PostEdit): Promise<Generate
     slug: existing.slug,
     updatedAt: new Date().toISOString(),
   };
-  return savePost(updated);
+  return savePost(updated, true);
 }
 
 export async function deletePost(slug: string): Promise<boolean> {
   if (!isValidSlug(slug)) return false;
 
-  if (useBlob()) {
+  if (hasBlobStorage()) {
     try {
       await del(blobPath(slug));
       return true;
@@ -189,7 +217,7 @@ export async function listPublished(): Promise<GeneratedPost[]> {
 /* ---------- hidden static slugs ---------- */
 
 export async function getHiddenSlugs(): Promise<string[]> {
-  if (useBlob()) {
+  if (hasBlobStorage()) {
     const parsed = await readBlobJson<unknown>(BLOB_HIDDEN);
     return Array.isArray(parsed) ? parsed.filter((s): s is string => typeof s === "string") : [];
   }
@@ -210,7 +238,7 @@ export async function setHidden(slug: string, hidden: boolean): Promise<string[]
   const next = [...current];
   const body = JSON.stringify(next, null, 2);
 
-  if (useBlob()) {
+  if (hasBlobStorage()) {
     await putBlobJson(BLOB_HIDDEN, body);
     return next;
   }

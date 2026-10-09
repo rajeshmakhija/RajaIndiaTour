@@ -1,4 +1,5 @@
 import { assemblePost } from "@/lib/blog/prompt";
+import { blogPosts } from "@/lib/data/blog";
 import { getPost } from "@/lib/blog/store";
 import type { GeneratedPost } from "@/lib/blog/types";
 import { generateWithGemini, geminiModel } from "@/lib/blog/providers/gemini";
@@ -31,15 +32,15 @@ export interface GenerateOptions {
  */
 export async function generateDraft(options: GenerateOptions): Promise<GeneratedPost> {
   const provider = activeProvider();
-  const raw =
+  const generated =
     provider === "anthropic"
-      ? await generateWithAnthropic(options.topic, options.category)
+      ? { content: await generateWithAnthropic(options.topic, options.category), model: anthropicModel() }
       : await generateWithGemini(options.topic, options.category);
 
-  return assemblePost(raw, {
+  return assemblePost(generated.content, {
     topic: options.topic,
     category: options.category,
-    model: activeModel(),
-    slugTaken: async (slug) => (await getPost(slug)) !== null,
+    model: generated.model,
+    slugTaken: async (slug) => blogPosts.some((post) => post.slug === slug) || (await getPost(slug)) !== null,
   });
 }

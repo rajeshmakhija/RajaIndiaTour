@@ -1,50 +1,63 @@
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
-import { generateDraft, TOPIC_IDEAS } from "@/lib/blog/generate";
-import { listPosts, savePost } from "@/lib/blog/store";
+import { generateDraft } from "@/lib/blog/generate";
+import { chooseBlogKeyword } from "@/lib/blog/keywords";
+import { claimPublicationDay, listPosts, savePost } from "@/lib/blog/store";
 
 export const maxDuration = 300;
 
-/**
- * Scheduled draft generation.
- *
- * Call it from Vercel Cron, a GitHub Action, or a cPanel cron job:
- *   curl -X POST https://rajaindiatour.fr/api/cron/blog \
- *        -H "Authorization: Bearer $CRON_SECRET"
- *
- * It only ever creates DRAFTS. Nothing appears on the public blog until
- * someone approves it in /admin/blog — that is the human in the loop.
- */
+const DAY_MS = 24 * 60 * 60 * 1000;
+const PUBLISH_HOUR_UTC = 7;
+
+function nextPublicationTime(lastPublished: number): number {
+  return (Math.floor(lastPublished / DAY_MS) + 3) * DAY_MS + PUBLISH_HOUR_UTC * 60 * 60 * 1000;
+}
+
+/** Vercel Cron calls GET daily; the persisted publication date enforces the cadence. */
 async function handle(request: Request) {
   const secret = process.env.CRON_SECRET;
-  if (!secret) {
-    return NextResponse.json({ error: "CRON_SECRET non configuré." }, { status: 503 });
-  }
+  if (!secret) return NextResponse.json({ error: "CRON_SECRET non configuré." }, { status: 503 });
   if (request.headers.get("authorization") !== `Bearer ${secret}`) {
     return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
   }
-
-  // Don't pile up unreviewed drafts.
-  const posts = await listPosts();
-  const pending = posts.filter((p) => p.status === "draft").length;
-  if (pending >= 5) {
-    return NextResponse.json({ skipped: true, reason: `${pending} brouillons en attente.` });
+  if (process.env.VERCEL && !process.env.BLOB_READ_WRITE_TOKEN) {
+    return NextResponse.json({ error: "BLOB_READ_WRITE_TOKEN non configuré." }, { status: 503 });
   }
 
-  // Pick a topic that hasn't been used yet.
-  const used = new Set(posts.map((p) => p.topic));
-  const available = TOPIC_IDEAS.filter((t) => !used.has(t));
-  const topic =
-    available.length > 0
-      ? available[Math.floor(Math.random() * available.length)]
-      : TOPIC_IDEAS[Math.floor(Math.random() * TOPIC_IDEAS.length)];
-
   try {
-    const draft = await generateDraft({ topic });
-    await savePost(draft);
-    return NextResponse.json({ created: draft.slug, topic });
+    const posts = await listPosts();
+    const lastPublished = posts
+      .map((post) => Date.parse(post.autoPublishedAt || ""))
+      .filter(Number.isFinite)
+      .reduce((latest, time) => Math.max(latest, time), 0);
+    const nextAt = nextPublicationTime(lastPublished);
+    if (lastPublished && Date.now() < nextAt) {
+      return NextResponse.json({ skipped: true, reason: "Trois jours calendaires non écoulés.", nextAt: new Date(nextAt).toISOString() });
+    }
+
+    const releaseClaim = await claimPublicationDay(new Date().toISOString().slice(0, 10));
+    if (!releaseClaim) {
+      return NextResponse.json({ skipped: true, reason: "Publication déjà en cours ou effectuée aujourd'hui." });
+    }
+    let published = false;
+    try {
+      const keyword = await chooseBlogKeyword(posts);
+      const post = await generateDraft({ topic: keyword });
+      post.status = "published";
+      post.autoPublishedAt = new Date().toISOString();
+      post.updatedAt = post.autoPublishedAt;
+      await savePost(post);
+      published = true;
+      revalidatePath("/blog");
+      revalidatePath(`/blog/${post.slug}`);
+      revalidatePath("/sitemap.xml");
+      return NextResponse.json({ published: post.slug, keyword, model: post.model, nextAt: new Date(nextPublicationTime(Date.parse(post.autoPublishedAt))).toISOString() });
+    } finally {
+      if (!published) await releaseClaim();
+    }
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Échec de la génération.";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("Automatic blog publication failed", error);
+    return NextResponse.json({ error: "Publication automatique échouée. Consultez les journaux du serveur." }, { status: 500 });
   }
 }
 
@@ -52,7 +65,6 @@ export async function POST(request: Request) {
   return handle(request);
 }
 
-/** Vercel Cron issues GET requests. */
 export async function GET(request: Request) {
   return handle(request);
 }

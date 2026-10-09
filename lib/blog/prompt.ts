@@ -104,6 +104,7 @@ export const FIELD_DOCS = {
 export function buildInstruction(topic: string, category?: string): string {
   return [
     `Rédige un article de blog sur le sujet suivant : « ${topic} ».`,
+    `Réponds à la requête principale « ${topic} ». Utilise ses termes importants naturellement dans le titre, le résumé et le début de l'article, sans répétition artificielle.`,
     category ? `Utilise la catégorie « ${category} ».` : null,
   ]
     .filter(Boolean)
@@ -113,11 +114,12 @@ export function buildInstruction(topic: string, category?: string): string {
 export function slugify(input: string): string {
   return input
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
-    .slice(0, 90);
+    .slice(0, 90)
+    .replace(/-+$/g, "");
 }
 
 /** Guard against a model returning a value outside the allowed set. */
@@ -146,17 +148,24 @@ export async function assemblePost(
   const content = Array.isArray(raw.content)
     ? raw.content.filter((p): p is string => typeof p === "string" && p.trim().length > 0)
     : [];
-  if (content.length === 0) {
-    throw new Error("L'article généré est vide. Réessayez.");
+  if (content.length < 7 || content.length > 11 || content.some((p) => p.length < 80 || p.length > 1200)) {
+    throw new Error("L'article généré ne respecte pas la longueur attendue. Réessayez.");
   }
 
-  const title = typeof raw.title === "string" && raw.title.trim() ? raw.title.trim() : ctx.topic;
+  const title = typeof raw.title === "string" ? raw.title.trim() : "";
+  const excerpt = typeof raw.excerpt === "string" ? raw.excerpt.trim() : "";
+  const readTime = typeof raw.readTime === "string" ? raw.readTime.trim() : "";
+  if (title.length < 30 || title.length > 100 || excerpt.length < 80 || excerpt.length > 240 || !/^\d{1,2} min$/.test(readTime)) {
+    throw new Error("Les métadonnées de l'article sont invalides. Réessayez.");
+  }
   let slug = slugify(typeof raw.slug === "string" && raw.slug ? raw.slug : title);
   if (!slug) slug = slugify(`article-${Date.now()}`);
 
   // Never overwrite an existing draft or published article.
-  if (await ctx.slugTaken(slug)) {
-    slug = `${slug}-${Date.now().toString(36).slice(-4)}`;
+  const baseSlug = slug.slice(0, 80).replace(/-+$/g, "");
+  let suffix = 2;
+  while (await ctx.slugTaken(slug)) {
+    slug = `${baseSlug}-${suffix++}`;
   }
 
   const now = new Date();
@@ -164,13 +173,10 @@ export async function assemblePost(
   return {
     slug,
     title,
-    excerpt:
-      typeof raw.excerpt === "string" && raw.excerpt.trim()
-        ? raw.excerpt.trim()
-        : content[0].slice(0, 160),
+    excerpt,
     date: now.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }),
     category: pick(raw.category, CATEGORIES, ctx.category ?? "Conseils voyage"),
-    readTime: typeof raw.readTime === "string" && raw.readTime.trim() ? raw.readTime.trim() : "6 min",
+    readTime,
     image: pick(raw.image, IMAGE_CHOICES, "/images/destinations/nord.jpg"),
     content,
     status: "draft",

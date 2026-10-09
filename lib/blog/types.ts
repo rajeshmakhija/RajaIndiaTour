@@ -17,6 +17,8 @@ export interface GeneratedPost extends BlogPost {
   topic: string;
   /** Model that produced the first draft */
   model: string;
+  /** Set when the scheduler publishes the post automatically. */
+  autoPublishedAt?: string;
 }
 
 /** Fields a human reviewer is allowed to change before publishing. */
