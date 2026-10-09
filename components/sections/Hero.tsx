@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Route, HeartHandshake, MapPin, Compass } from "lucide-react";
 
@@ -13,20 +14,30 @@ const promises = [
   { icon: Compass, label: "Vivez des circuits inoubliables" },
 ];
 
+/** Static LCP poster — shown immediately; video loads later if the connection allows. */
+const HERO_POSTER = "/images/destinations/rajasthan.jpg";
+
 export function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
 
   useEffect(() => {
-    // Don't compete with first paint — start video after a short idle.
+    // Skip video on slow connections / data-saver — poster is enough.
+    const conn = (navigator as Navigator & {
+      connection?: { saveData?: boolean; effectiveType?: string };
+    }).connection;
+    if (conn?.saveData || conn?.effectiveType === "slow-2g" || conn?.effectiveType === "2g") {
+      return;
+    }
+
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
     let idleId: number | undefined;
     const enable = () => setShouldLoadVideo(true);
 
     if ("requestIdleCallback" in window) {
-      idleId = window.requestIdleCallback(enable, { timeout: 1800 });
+      idleId = window.requestIdleCallback(enable, { timeout: 3500 });
     } else {
-      timeoutId = setTimeout(enable, 600);
+      timeoutId = setTimeout(enable, 1500);
     }
 
     return () => {
@@ -67,6 +78,16 @@ export function Hero() {
       </div>
 
       <div className="relative h-[calc(100svh-12rem)] min-h-[360px] w-full bg-[#1a2433] md:h-[calc(100svh-13rem)] md:min-h-[440px]">
+        <Image
+          src={HERO_POSTER}
+          alt=""
+          fill
+          priority
+          quality={70}
+          sizes="100vw"
+          className="object-cover object-center brightness-[1.1] contrast-[1.05] saturate-[1.05]"
+        />
+
         {shouldLoadVideo && (
           <video
             ref={videoRef}
@@ -74,7 +95,8 @@ export function Hero() {
             muted
             loop
             playsInline
-            preload="metadata"
+            preload="none"
+            poster={HERO_POSTER}
             className="absolute inset-0 h-full w-full object-cover object-center brightness-[1.15] contrast-[1.05] saturate-[1.08]"
             aria-label="Vidéo de présentation Raja India Tour"
           >
