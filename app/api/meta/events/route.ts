@@ -1,12 +1,8 @@
 import { NextResponse } from "next/server";
-import {
-  isMetaConfigured,
-  sendMetaCapiEvents,
-  type MetaCapiEvent,
-  type MetaStandardEvent,
-} from "@/lib/meta/capi";
+import { siteConfig } from "@/lib/site";
+import { isMetaConfigured, sendMetaCapiEvents, type MetaCapiEvent } from "@/lib/meta/capi";
 
-const ALLOWED: MetaStandardEvent[] = ["ViewContent", "Contact", "Search", "Lead"];
+const MAX_BODY_BYTES = 4_096;
 
 function clientIp(request: Request): string | undefined {
   const forwarded = request.headers.get("x-forwarded-for");
@@ -14,54 +10,96 @@ function clientIp(request: Request): string | undefined {
   return request.headers.get("x-real-ip") ?? undefined;
 }
 
-export async function POST(request: Request) {
-  if (!isMetaConfigured()) {
-    return NextResponse.json({ skipped: true, reason: "not_configured" });
-  }
-
-  try {
-    const body = await request.json();
-    const raw = Array.isArray(body?.events) ? body.events : [];
-    const ip = clientIp(request);
-
-    // Require Meta click id (fbc) or fbclid in the source URL — blocks organic traffic
-    const events: MetaCapiEvent[] = raw
-      .filter((e: Record<string, unknown>) => {
-        if (
-          !e ||
-          typeof e.event_name !== "string" ||
-          !ALLOWED.includes(e.event_name as MetaStandardEvent) ||
-          typeof e.event_id !== "string" ||
-          typeof e.event_source_url !== "string" ||
-          typeof e.client_user_agent !== "string"
-        ) {
-          return false;
-        }
-        const url = String(e.event_source_url);
-        const hasFbclid = url.includes("fbclid=");
-        const hasFbc = typeof e.fbc === "string" && e.fbc.length > 0;
-        return hasFbclid || hasFbc;
-      })
-      .map((e: Record<string, unknown>) => ({
-        event_name: e.event_name as MetaStandardEvent,
-        event_id: e.event_id as string,
-        event_source_url: e.event_source_url as string,
-        client_user_agent: e.client_user_agent as string,
-        email: typeof e.email === "string" ? e.email : undefined,
-        fbp: typeof e.fbp === "string" ? e.fbp : undefined,
-        fbc: typeof e.fbc === "string" ? e.fbc : undefined,
-        search_string: typeof e.search_string === "string" ? e.search_string : undefined,
-        client_ip_address: ip,
-      }));
-
-    if (!events.length) {
-      return NextResponse.json({ skipped: true, reason: "not_meta_traffic" });
+async function readLimitedJson(request: Request): Promise<unknown> {
+  if (Number(request.headers.get("content-length")) > MAX_BODY_BYTES) throw new Error("body_too_large");
+  const reader = request.body?.getReader();
+  if (!reader) throw new Error("invalid_body");
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > MAX_BODY_BYTES) {
+      await reader.cancel().catch(() => undefined);
+      throw new Error("body_too_large");
     }
-
-    const result = await sendMetaCapiEvents(events);
-    return NextResponse.json({ ok: true, result });
-  } catch (err) {
-    console.error("Meta events route error:", err);
-    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+    chunks.push(value);
   }
+  try {
+    return JSON.parse(Buffer.concat(chunks).toString("utf8"));
+  } catch {
+    throw new Error("invalid_body");
+  }
+}
+
+function sameSiteSource(value: unknown, request: Request): URL | null {
+  if (typeof value !== "string" || value.length > 2_048) return null;
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:" && url.protocol !== "http:") return null;
+    const requestOrigin = new URL(request.url).origin;
+    const siteOrigin = new URL(siteConfig.url).origin;
+    return url.origin === requestOrigin || url.origin === siteOrigin ? url : null;
+  } catch {
+    return null;
+  }
+}
+
+function parseEvent(raw: unknown, request: Request): MetaCapiEvent | null {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const event = raw as Record<string, unknown>;
+  if (event.event_name !== "ViewContent" && event.event_name !== "Search") return null;
+  if (typeof event.event_id !== "string" || !/^[A-Za-z0-9_-]{1,100}$/.test(event.event_id)) return null;
+  const source = sameSiteSource(event.event_source_url, request);
+  if (!source) return null;
+  const fbc = typeof event.fbc === "string" && /^fb\.1\.\d{10,13}\.[A-Za-z0-9_-]{8,512}$/.test(event.fbc)
+    ? event.fbc : undefined;
+  const fbclid = source.searchParams.get("fbclid");
+  if (!fbc && (!fbclid || fbclid.length < 8 || fbclid.length > 512)) return null;
+  if (event.search_string != null && (typeof event.search_string !== "string" || event.search_string.length > 300)) return null;
+
+  return {
+    event_name: event.event_name,
+    event_id: event.event_id,
+    event_source_url: source.href,
+    client_user_agent: (request.headers.get("user-agent") ?? "").slice(0, 512),
+    fbc,
+    fbp: typeof event.fbp === "string" && event.fbp.length <= 200 ? event.fbp : undefined,
+    search_string: typeof event.search_string === "string" ? event.search_string : undefined,
+    client_ip_address: clientIp(request),
+  };
+}
+
+export async function POST(request: Request) {
+  if (!isMetaConfigured()) return NextResponse.json({ skipped: true, reason: "not_configured" });
+
+  const allowedOrigins = [new URL(request.url).origin, new URL(siteConfig.url).origin];
+  const origin = request.headers.get("origin");
+  if ((origin && !allowedOrigins.includes(origin)) || request.headers.get("sec-fetch-site") === "cross-site") {
+    return NextResponse.json({ error: "Origine invalide" }, { status: 403 });
+  }
+
+  let body: unknown;
+  try {
+    body = await readLimitedJson(request);
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Demande invalide" },
+      { status: error instanceof Error && error.message === "body_too_large" ? 413 : 400 },
+    );
+  }
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return NextResponse.json({ error: "Demande invalide" }, { status: 400 });
+  }
+  const rawEvents = (body as Record<string, unknown>).events;
+  if (!Array.isArray(rawEvents) || rawEvents.length !== 1) {
+    return NextResponse.json({ error: "Événement invalide" }, { status: 400 });
+  }
+  const event = parseEvent(rawEvents[0], request);
+  if (!event) return NextResponse.json({ skipped: true, reason: "invalid_event" });
+
+  const result = await sendMetaCapiEvents([event]);
+  if (result?.error) return NextResponse.json({ error: "Meta indisponible" }, { status: 502 });
+  return NextResponse.json({ ok: true });
 }

@@ -270,10 +270,6 @@ export function ItineraryBuilder() {
     setError("");
     try {
       const meta = metaFormContext();
-      if (meta.marketingConsent) {
-        void trackMetaEvent("Lead", { email: data.email, eventId: meta.leadEventId });
-        void trackMetaEvent("Contact", { email: data.email, eventId: meta.contactEventId });
-      }
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -300,6 +296,10 @@ export function ItineraryBuilder() {
         }),
       });
       if (!res.ok) throw new Error("Erreur");
+      if (meta.marketingConsent) {
+        void trackMetaEvent("Lead", { email: data.email, eventId: meta.leadEventId });
+        void trackMetaEvent("Contact", { email: data.email, eventId: meta.contactEventId });
+      }
       setDone(true);
       localStorage.removeItem(STORAGE_KEY);
       keepFormInView();

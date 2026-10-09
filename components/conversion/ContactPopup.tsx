@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Mail, MessageCircle, X } from "lucide-react";
 import { metaFormContext, trackMetaEvent } from "@/lib/meta/client";
 
@@ -23,11 +23,11 @@ export function ContactPopup() {
     window.setTimeout(() => setPhase("open"), 20);
   };
 
-  const closePopup = () => {
+  const closePopup = useCallback(() => {
     if (phase === "closing" || phase === "docked") return;
     setPhase("closing");
     window.setTimeout(() => setPhase("docked"), 420);
-  };
+  }, [phase]);
 
   useEffect(() => {
     if (phase === "open") closeButtonRef.current?.focus();
@@ -37,13 +37,19 @@ export function ContactPopup() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [phase]);
+  }, [phase, closePopup]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setStatus("loading");
     try {
       const meta = metaFormContext();
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, source: "contact-popup", meta }),
+      });
+      if (!response.ok) throw new Error("Contact request failed");
       if (meta.marketingConsent) {
         void trackMetaEvent("Lead", { email: form.email, eventId: meta.leadEventId });
         void trackMetaEvent("Contact", { email: form.email, eventId: meta.contactEventId });
@@ -54,12 +60,6 @@ export function ContactPopup() {
           });
         }
       }
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, source: "contact-popup", meta }),
-      });
-      if (!response.ok) throw new Error("Contact request failed");
       setStatus("done");
     } catch {
       setStatus("error");

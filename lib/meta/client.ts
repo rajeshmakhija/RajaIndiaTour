@@ -4,6 +4,8 @@ export type MetaBrowserEvent = "ViewContent" | "Contact" | "Search" | "Lead";
 
 /** Session flag: visitor arrived via Meta (ad click / Facebook / Instagram). */
 const META_TRAFFIC_KEY = "rit_from_meta";
+let pendingFbclid: string | null = null;
+let observedMetaTraffic = false;
 
 declare global {
   interface Window {
@@ -35,17 +37,14 @@ function readCookie(name: string): string | undefined {
 
 function isMetaReferrer(): boolean {
   if (typeof document === "undefined") return false;
-  const ref = document.referrer.toLowerCase();
-  if (!ref) return false;
-  return (
-    ref.includes("facebook.com") ||
-    ref.includes("fb.com") ||
-    ref.includes("fb.me") ||
-    ref.includes("instagram.com") ||
-    ref.includes("l.facebook.com") ||
-    ref.includes("lm.facebook.com") ||
-    ref.includes("m.facebook.com")
-  );
+  try {
+    const host = new URL(document.referrer).hostname.toLowerCase();
+    return ["facebook.com", "fb.com", "fb.me", "instagram.com"].some(
+      (domain) => host === domain || host.endsWith(`.${domain}`),
+    );
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -55,22 +54,27 @@ function isMetaReferrer(): boolean {
 export function detectAndRememberMetaTraffic(): boolean {
   if (typeof window === "undefined") return false;
 
-  try {
-    if (sessionStorage.getItem(META_TRAFFIC_KEY) === "1") return true;
-  } catch {
-    /* private mode */
+  if (hasMarketingConsent()) {
+    try {
+      if (sessionStorage.getItem(META_TRAFFIC_KEY) === "1") return true;
+    } catch {
+      /* private mode */
+    }
   }
 
   const params = new URLSearchParams(window.location.search);
-  const hasFbclid = Boolean(params.get("fbclid"));
+  const hasFbclid = Boolean(params.get("fbclid") || pendingFbclid);
   const hasFbc = Boolean(readCookie("_fbc"));
-  const fromMeta = hasFbclid || hasFbc || isMetaReferrer();
+  const fromMeta = observedMetaTraffic || hasFbclid || hasFbc || isMetaReferrer();
 
   if (fromMeta) {
-    try {
-      sessionStorage.setItem(META_TRAFFIC_KEY, "1");
-    } catch {
-      /* ignore */
+    observedMetaTraffic = true;
+    if (hasMarketingConsent()) {
+      try {
+        sessionStorage.setItem(META_TRAFFIC_KEY, "1");
+      } catch {
+        /* ignore */
+      }
     }
   }
 
@@ -86,18 +90,35 @@ export function isFromMetaTraffic(): boolean {
 export function captureFbclid(): string | undefined {
   if (typeof window === "undefined") return undefined;
   const params = new URLSearchParams(window.location.search);
-  const fbclid = params.get("fbclid");
+  pendingFbclid = params.get("fbclid") || pendingFbclid;
+  if (!hasMarketingConsent()) return undefined;
+  const fbclid = pendingFbclid;
   if (!fbclid) return readCookie("_fbc");
 
   const fbc = `fb.1.${Date.now()}.${fbclid}`;
   const maxAge = 90 * 24 * 60 * 60;
   document.cookie = `_fbc=${encodeURIComponent(fbc)}; path=/; max-age=${maxAge}; SameSite=Lax`;
+  pendingFbclid = null;
   try {
     sessionStorage.setItem(META_TRAFFIC_KEY, "1");
   } catch {
     /* ignore */
   }
   return fbc;
+}
+
+export function clearMetaTrackingCookies(): void {
+  if (typeof document === "undefined") return;
+  const domain = window.location.hostname.replace(/^www\./, "");
+  for (const name of ["_fbc", "_fbp"]) {
+    document.cookie = `${name}=; path=/; max-age=0; SameSite=Lax`;
+    document.cookie = `${name}=; path=/; max-age=0; SameSite=Lax; domain=${domain}`;
+  }
+  try {
+    sessionStorage.removeItem(META_TRAFFIC_KEY);
+  } catch {
+    /* ignore */
+  }
 }
 
 export function getMetaClickIds(): { fbp?: string; fbc?: string } {
@@ -133,6 +154,9 @@ export async function trackMetaEvent(
     window.fbq("track", eventName, params, { eventID: eventId });
   }
 
+  // The contact endpoint sends these CAPI conversions after email delivery.
+  if (eventName === "Lead" || eventName === "Contact") return eventId;
+
   try {
     await fetch("/api/meta/events", {
       method: "POST",
@@ -144,7 +168,6 @@ export async function trackMetaEvent(
             event_id: eventId,
             event_source_url,
             client_user_agent,
-            email: options.email,
             fbp,
             fbc,
             search_string: options.searchString,

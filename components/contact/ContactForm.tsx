@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui";
 import { metaFormContext, trackMetaEvent } from "@/lib/meta/client";
 
@@ -17,12 +17,27 @@ export function ContactForm() {
   });
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const destination = params.get("destination");
+    const circuit = params.get("circuit");
+    const trip = [destination && `Destination : ${destination.replaceAll("-", " ")}`, circuit && `Circuit : ${circuit.replaceAll("-", " ")}`]
+      .filter(Boolean)
+      .join(" / ");
+    if (trip) setForm((current) => current.destination ? current : { ...current, destination: trip });
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("loading");
     try {
       const meta = metaFormContext();
-      // Browser Pixel (same event IDs as server CAPI for dedup)
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, source: "contact-page", meta }),
+      });
+      if (!res.ok) throw new Error();
       if (meta.marketingConsent) {
         void trackMetaEvent("Lead", { email: form.email, eventId: meta.leadEventId });
         void trackMetaEvent("Contact", { email: form.email, eventId: meta.contactEventId });
@@ -33,12 +48,6 @@ export function ContactForm() {
           });
         }
       }
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, source: "contact-page", meta }),
-      });
-      if (!res.ok) throw new Error();
       setStatus("done");
     } catch {
       setStatus("error");

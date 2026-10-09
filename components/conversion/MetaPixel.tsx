@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { CONSENT_STORAGE_KEY, type ConsentChoice } from "@/lib/consent";
 import {
   captureFbclid,
+  clearMetaTrackingCookies,
   detectAndRememberMetaTraffic,
   trackMetaEvent,
 } from "@/lib/meta/client";
@@ -38,7 +39,12 @@ export function MetaPixel() {
     const onConsent = (e: Event) => {
       const detail = (e as CustomEvent<ConsentChoice>).detail;
       setAllowed(detail === "granted");
-      if (detail === "granted") lastPath.current = "";
+      if (detail === "granted") {
+        lastPath.current = "";
+        captureFbclid();
+      } else {
+        clearMetaTrackingCookies();
+      }
       setFromMeta(detectAndRememberMetaTraffic());
     };
     window.addEventListener("rit-consent", onConsent as EventListener);

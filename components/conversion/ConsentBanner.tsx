@@ -9,11 +9,13 @@ import {
 
 export function ConsentBanner() {
   const [visible, setVisible] = useState(false);
+  const [hasChoice, setHasChoice] = useState(false);
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem(CONSENT_STORAGE_KEY) as ConsentChoice | null;
       if (stored === "granted" || stored === "denied") {
+        setHasChoice(true);
         // Restore for this session (default script already applied it in <head> when possible)
         updateConsent(stored);
         return;
@@ -32,10 +34,21 @@ export function ConsentBanner() {
     }
     updateConsent(choice);
     window.dispatchEvent(new CustomEvent("rit-consent", { detail: choice }));
+    setHasChoice(true);
     setVisible(false);
   }
 
-  if (!visible) return null;
+  if (!visible) {
+    return hasChoice ? (
+      <button
+        type="button"
+        onClick={() => setVisible(true)}
+        className="fixed bottom-16 left-4 z-40 rounded-full border border-cream-dark bg-white px-3 py-2 text-xs font-semibold text-ink shadow-md md:bottom-4"
+      >
+        Cookies
+      </button>
+    ) : null;
+  }
 
   return (
     <div
