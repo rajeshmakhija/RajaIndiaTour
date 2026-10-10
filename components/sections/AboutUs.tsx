@@ -44,23 +44,15 @@ export function AboutUs() {
           </div>
 
           <div className="border-t border-cream-dark pt-8 lg:border-l lg:border-t-0 lg:pl-16 lg:pt-0">
-            <p className="font-display text-2xl font-semibold leading-snug text-brand-blue md:text-3xl">
-              Un voyage réussi commence par une vraie conversation.
-            </p>
-
-            <div className="mt-7 space-y-5 text-base leading-7 text-muted md:text-lg md:leading-8">
+            <div className="space-y-5 text-base leading-7 text-muted md:text-lg md:leading-8">
               <p>
-                Je m&apos;appelle Rajesh, mais tous mes voyageurs m&apos;appellent Raja. Depuis 25 ans,
-                j&apos;accompagne des visiteurs francophones en Inde et dans les pays voisins.
+                Je m&apos;appelle Rajesh (Raja). Depuis 25 ans, je travaille comme guide français en Inde et dans les pays voisins. Je suis approuvé par le gouvernement Indien et le ministère du tourisme.
               </p>
               <p>
-                Je prépare chaque itinéraire moi-même, selon votre rythme, vos centres d&apos;intérêt et
-                votre budget. Vous voyagez sans intermédiaire, avec des étapes bien choisies, des hôtels
-                de charme et du temps pour rencontrer la population locale.
+                J’organise des voyages avec mon agence RAJA INDIA TOUR. Si vous recherchez des voyages authentiques, hors des sentiers battus, pour vous imprégner au mieux de la vie et des traditions indiennes, contactez-moi. Je vous propose des voyages sur mesure, adaptés à vos attentes et vos centres d’intérêts, sans intermédiaire pour un prix réduit.
               </p>
               <p className="font-medium text-ink">
-                Petits groupes, liberté et attention personnelle. Loin des circuits standardisés et des
-                cars bondés.
+                Je réside en Inde et je parle le français, profitez de mon expérience et de ma connaissance du pays. Au sein de petits groupes, accompagnés par un guide à l’écoute et proche de vous, venez vivre des séjours inoubliables au cœur de l’Inde traditionnelle. Je vous ferai découvrir villes, monuments, marchés, villages… et vous conduirai au contact de la population.
               </p>
             </div>
           </div>
