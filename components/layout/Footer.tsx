@@ -15,6 +15,7 @@ const footerLinks = {
     { href: "/a-propos", label: "À propos de Raja" },
     { href: "/creer-mon-itineraire", label: "Créez votre itinéraire" },
     { href: "/circuits", label: "Nos circuits" },
+    { href: "/guides", label: "Guides & outils" },
     { href: "/blog", label: "Blog" },
     { href: "/contact", label: "Contact" },
   ],
@@ -22,7 +23,7 @@ const footerLinks = {
 
 export function Footer() {
   return (
-    <footer className="border-t border-cream-dark bg-white">
+    <footer className="site-footer border-t border-cream-dark bg-white">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-3">
         <div className="md:col-span-1">
           <Logo />

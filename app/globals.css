@@ -40,6 +40,20 @@ body {
   color: var(--color-ink);
 }
 
+::selection {
+  background: color-mix(in srgb, var(--color-brand-red) 22%, white);
+  color: var(--color-brand-blue-dark);
+}
+
+:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-warm) 72%, white);
+  outline-offset: 3px;
+}
+
+html {
+  scrollbar-color: var(--color-brand-blue) #eef1f5;
+}
+
 .font-display {
   font-family: var(--font-playfair), Georgia, serif;
 }
@@ -152,5 +166,16 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .contact-popup-rainbow {
     animation: none;
+  }
+}
+
+@media print {
+  .site-header,
+  .site-footer {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff;
   }
 }

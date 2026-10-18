@@ -10,6 +10,7 @@ import { circuitMenuItems } from "@/lib/data/navigation";
 
 const navLinks = [
   { href: "/creer-mon-itineraire", label: "Sur mesure" },
+  { href: "/guides", label: "Guides" },
   { href: "/blog", label: "Blog" },
   { href: "/a-propos", label: "À propos" },
   { href: "/contact", label: "Contact" },
@@ -21,12 +22,12 @@ export function Header() {
   const [hoverMenu, setHoverMenu] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-cream-dark bg-white/95 backdrop-blur-md shadow-sm">
+    <header className="site-header sticky top-0 z-50 border-b border-cream-dark bg-white/95 backdrop-blur-md shadow-sm">
       <TopContactBar />
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Logo />
 
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-8 lg:flex">
           <div
             className="relative"
             onMouseEnter={() => setHoverMenu(true)}
@@ -83,7 +84,7 @@ export function Header() {
         </nav>
 
         <button
-          className="md:hidden p-2 text-ink"
+          className="p-2 text-ink lg:hidden"
           onClick={() => setOpen(!open)}
           aria-label="Menu"
         >
@@ -92,7 +93,7 @@ export function Header() {
       </div>
 
       {open && (
-        <nav className="border-t border-cream-dark bg-white px-4 py-4 md:hidden">
+        <nav className="border-t border-cream-dark bg-white px-4 py-4 lg:hidden">
           <button
             type="button"
             className="flex w-full items-center justify-between py-3 text-sm font-medium text-ink"

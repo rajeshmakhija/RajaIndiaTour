@@ -11,6 +11,48 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: "voyager-en-inde-avec-des-enfants",
+    title: "Voyager en Inde avec des enfants : une aventure à leur hauteur",
+    excerpt:
+      "Rythme, étapes et rencontres : comment imaginer un voyage familial en Inde qui émerveille les enfants sans les épuiser.",
+    date: "18 octobre 2026",
+    category: "Voyage en famille",
+    readTime: "8 min",
+    image: "/images/destinations/places/jaipur-amber.jpg",
+    content: [
+      "Au lever du jour, Jaipur n'est encore qu'un murmure. Les marchands soulèvent leurs rideaux de métal, un vendeur de chai fait danser le thé entre deux gobelets et, au loin, les remparts d'Amber prennent la couleur du miel. Pour un enfant, l'Inde commence souvent ainsi : non par une longue explication, mais par une scène qu'il n'oubliera pas.",
+      "Voyager en Inde en famille ne consiste pas à suivre un circuit d'adultes en demandant aux plus jeunes de tenir le rythme. Le voyage devient plus beau lorsque chaque journée leur laisse le temps de regarder, de poser des questions et de transformer un palais, un marché ou un trajet en véritable histoire.",
+      "Le Rajasthan se prête particulièrement bien à cette première rencontre. À Delhi, les enfants découvrent les tuk-tuks et les grands jardins. À Agra, le Taj Mahal ressemble à un décor sorti d'un conte. À Jaipur, les passages secrets des forts réveillent l'imagination. Plus à l'ouest, Jodhpur et Jaisalmer ouvrent la route du désert et de ses nuits étoilées.",
+      "La clé n'est pas de multiplier les villes, mais de choisir quelques étapes qui ont chacune une personnalité forte. Deux nuits au même endroit changent tout : une matinée peut être consacrée à une visite, l'après-midi à la piscine ou au jardin de l'hôtel, puis la soirée à une promenade tranquille. Le voyage garde ainsi son énergie au lieu de devenir une course.",
+      "Les trajets font eux aussi partie du récit. Depuis la voiture, les paysages passent des faubourgs animés aux champs de moutarde, puis aux villages où les troupeaux traversent encore la route. Avec un chauffeur qui connaît les habitudes de la famille, une pause peut se décider au bon moment et une longue liaison devenir une succession de petites découvertes.",
+      "Les hébergements de caractère donnent une autre dimension au séjour. Une ancienne haveli avec une cour intérieure, une demeure familiale ou un petit palais racontent l'Inde même lorsque la journée de visite est terminée. Les enfants se souviennent souvent autant d'un escalier caché ou d'un petit déjeuner sur une terrasse que d'un monument célèbre.",
+      "L'Inde invite aussi à la rencontre. Quelques mots échangés avec une famille, l'observation d'un artisan ou un atelier de cuisine créent un lien plus direct que n'importe quel discours. Encadrées avec simplicité et respect, ces rencontres permettent aux enfants de comprendre que le voyage n'est pas seulement une collection de lieux, mais une manière de regarder le monde autrement.",
+      "Un itinéraire familial réussi garde enfin une part de souplesse. La chaleur, la fatigue ou l'enthousiasme du moment peuvent modifier le programme. Renoncer à une visite pour prolonger une promenade ou rentrer plus tôt n'enlève rien au voyage. C'est souvent dans ces respirations que naissent les meilleurs souvenirs.",
+      "Raja construit chaque circuit familial autour de l'âge des enfants, du temps disponible et du rythme réel de la famille. L'objectif n'est pas de tout montrer, mais de créer une première Inde que petits et grands auront envie de continuer à raconter longtemps après leur retour.",
+    ],
+  },
+  {
+    slug: "train-ou-voiture-avec-chauffeur-en-inde",
+    title: "Train ou voiture avec chauffeur : comment voyager à travers l'Inde ?",
+    excerpt:
+      "Deux façons de traverser le pays, deux expériences très différentes. Voici comment choisir selon les distances et le rythme du voyage.",
+    date: "14 octobre 2026",
+    category: "Transports",
+    readTime: "8 min",
+    image: "/images/destinations/nord-delhi.jpg",
+    content: [
+      "À la gare de Delhi, les quais racontent déjà le voyage. Des familles partagent un repas, les vendeurs avancent entre les voyageurs et le nom des villes résonne sous la grande toiture. Quelques heures plus tard, sur une route du Rajasthan, le décor est tout autre : villages, temples, camions peints et troupeaux apparaissent derrière la vitre. Le train et la voiture ne montrent pas la même Inde.",
+      "Le train est une expérience à part entière. Il relie efficacement certaines grandes villes et permet de traverser de longues distances sans passer toute la journée sur la route. Entre Delhi, Agra, Jaipur ou Varanasi, il peut offrir un moment vivant, ponctué de conversations et de paysages observés depuis la fenêtre.",
+      "Mais un voyage en train suit son propre rythme. Il faut rejoindre la gare, trouver le bon quai, composer avec les horaires et organiser séparément les déplacements à l'arrivée. Pour certains voyageurs, cette énergie fait partie du plaisir. Pour d'autres, elle ajoute une contrainte à une journée déjà dense.",
+      "La voiture avec chauffeur apporte une liberté différente. Elle attend devant l'hôtel, accueille les bagages et permet de partir quand la journée commence réellement. Sur la route de Jaipur à Jodhpur ou de Jodhpur à Udaipur, elle ouvre aussi la porte à des étapes que le train laisse de côté : un village, un temple isolé, un marché ou le sanctuaire de Ranakpur.",
+      "Cette souplesse compte particulièrement dans un circuit comprenant plusieurs villes. Le chauffeur ne remplace pas le guide dans les monuments, mais il devient un repère constant entre les étapes. Il connaît les routes, les temps de parcours réalistes et les endroits où une pause a du sens.",
+      "Le choix dépend donc moins d'une préférence absolue que de chaque liaison. Un train rapide peut être idéal entre Delhi et Agra. Une voiture devient plus naturelle pour explorer le Rajasthan en profondeur. Un train de nuit ou un vol intérieur peut éviter une journée trop longue lorsque les distances changent d'échelle.",
+      "Les meilleurs itinéraires combinent souvent plusieurs moyens de transport. Le train apporte une immersion et économise du temps sur certains axes. La voiture crée de la continuité et permet d'atteindre les lieux situés entre les grandes villes. L'avion garde sa place lorsque deux régions éloignées doivent être reliées sans sacrifier plusieurs jours.",
+      "Sur une carte, deux étapes peuvent sembler proches. En Inde, la circulation, l'état des routes et les traversées de villages transforment pourtant les kilomètres en temps vécu. Prévoir moins d'étapes et mieux choisir les liaisons donne au voyage une respiration que les itinéraires trop serrés n'ont jamais.",
+      "Raja étudie chaque trajet séparément avant de construire le circuit. Le résultat n'est ni un voyage entièrement en train ni une succession automatique de journées en voiture, mais un itinéraire où chaque déplacement sert l'expérience au lieu de simplement remplir l'espace entre deux hôtels.",
+    ],
+  },
+  {
     slug: "quand-partir-en-inde",
     title: "Quand partir en Inde ? Les meilleures périodes par région",
     excerpt:
