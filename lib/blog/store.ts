@@ -127,9 +127,15 @@ export async function listPosts(): Promise<GeneratedPost[]> {
     const posts = await Promise.all(
       blobs
         .filter((b) => b.pathname.endsWith(".json") && !b.pathname.includes("/_"))
-        .map(async (b) => readBlobJson<GeneratedPost>(b.pathname)),
+        .map(async (b) => {
+          try {
+            return await readBlobJson<GeneratedPost>(b.pathname);
+          } catch (error) {
+            console.warn("Skipping unreadable blog blob:", b.pathname, error);
+            return null;
+          }
+        }),
     );
-    if (posts.some((post) => post === null)) throw new Error("Un article Blob a disparu pendant la lecture.");
     return posts
       .filter((p): p is GeneratedPost => p !== null && typeof p.slug === "string")
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt));

@@ -7,8 +7,8 @@ import {
   buildSystemPrompt,
 } from "@/lib/blog/prompt";
 
-/** Override with GEMINI_MODEL if this model is unavailable to the account. */
-export const DEFAULT_GEMINI_MODEL = "gemini-3.8-flash";
+/** Prefer a currently reliable Flash model; override with GEMINI_MODEL. */
+export const DEFAULT_GEMINI_MODEL = "gemini-3.5-flash-lite";
 
 /**
  * JSON Schema restricted to the subset Gemini's responseJsonSchema supports:
@@ -40,7 +40,7 @@ export function geminiModel(): string {
 export function geminiModels(): string[] {
   return [...new Set([
     geminiModel(),
-    ...(process.env.GEMINI_FALLBACK_MODELS || "gemini-3.5-flash-lite")
+    ...(process.env.GEMINI_FALLBACK_MODELS || "gemini-3.8-flash,gemini-3.6-flash")
       .split(",")
       .map((model) => model.trim())
       .filter(Boolean),
@@ -50,6 +50,40 @@ export function geminiModels(): string[] {
 export interface GeminiResult {
   content: Record<string, unknown>;
   model: string;
+}
+
+function createClient(apiKey: string): GoogleGenAI {
+  // Only force Vertex Express when explicitly requested.
+  // Many AQ.* AI Studio keys still authenticate against the Developer API.
+  const useVertex =
+    process.env.GEMINI_VERTEX === "1" || process.env.GEMINI_VERTEX === "true";
+  return new GoogleGenAI(useVertex ? { apiKey, vertexai: true } : { apiKey });
+}
+
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timer);
+        reject(error);
+      },
+    );
+  });
+}
+
+function isRetryable(message: string): boolean {
+  return /UNAVAILABLE|high demand|429|RESOURCE_EXHAUSTED|timed out|503/i.test(message);
+}
+
+function isFatalAuth(message: string): boolean {
+  return /API_KEY_INVALID|invalid api key|401|UNAUTHENTICATED|ACCESS_TOKEN_TYPE_UNSUPPORTED|API_KEY_SERVICE_BLOCKED/i.test(
+    message,
+  );
 }
 
 async function generateJson(
@@ -62,35 +96,51 @@ async function generateJson(
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error("GEMINI_API_KEY manquante.");
 
-  const ai = new GoogleGenAI({ apiKey });
+  const ai = createClient(apiKey);
   const failures: string[] = [];
+  const timeoutMs = Number(process.env.GEMINI_TIMEOUT_MS || 90000);
+
   for (const model of geminiModels()) {
-    try {
-      const response = await ai.models.generateContent({
-        model,
-        contents,
-        config: {
-          systemInstruction,
-          responseMimeType: "application/json",
-          responseJsonSchema,
-          maxOutputTokens,
-          temperature: 0.8,
-        },
-      });
-      if (!response.text) throw new Error("réponse vide");
-      const parsed: unknown = JSON.parse(response.text);
-      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-        throw new Error("JSON invalide");
+    let attemptError = "";
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        const response = await withTimeout(
+          ai.models.generateContent({
+            model,
+            contents,
+            config: {
+              systemInstruction,
+              responseMimeType: "application/json",
+              responseJsonSchema,
+              maxOutputTokens,
+              temperature: 0.8,
+            },
+          }),
+          timeoutMs,
+          model,
+        );
+        if (!response.text) throw new Error("réponse vide");
+        const parsed: unknown = JSON.parse(response.text);
+        if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+          throw new Error("JSON invalide");
+        }
+        const content = parsed as Record<string, unknown>;
+        if (!isValid(content)) throw new Error("contenu inexploitable");
+        return { content, model };
+      } catch (error) {
+        attemptError = error instanceof Error ? error.message : String(error);
+        if (isFatalAuth(attemptError)) {
+          failures.push(`${model}: ${attemptError}`);
+          throw new Error(`Tous les modèles Gemini ont échoué. ${failures.join(" | ")}`);
+        }
+        if (attempt === 1 && isRetryable(attemptError)) {
+          await new Promise((r) => setTimeout(r, 1500 * attempt));
+          continue;
+        }
+        break;
       }
-      const content = parsed as Record<string, unknown>;
-      if (!isValid(content)) throw new Error("contenu inexploitable");
-      return { content, model };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      failures.push(`${model}: ${message}`);
-      // A bad credential cannot be fixed by switching models.
-      if (/API_KEY_INVALID|invalid api key|401|UNAUTHENTICATED/i.test(message)) break;
     }
+    failures.push(`${model}: ${attemptError}`);
   }
   throw new Error(`Tous les modèles Gemini ont échoué. ${failures.join(" | ")}`);
 }

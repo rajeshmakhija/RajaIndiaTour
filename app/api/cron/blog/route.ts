@@ -57,7 +57,14 @@ async function handle(request: Request) {
     }
   } catch (error) {
     console.error("Automatic blog publication failed", error);
-    return NextResponse.json({ error: "Publication automatique échouée. Consultez les journaux du serveur." }, { status: 500 });
+    const message = error instanceof Error ? error.message : "Erreur inconnue";
+    return NextResponse.json(
+      {
+        error: "Publication automatique échouée.",
+        details: message.slice(0, 500),
+      },
+      { status: 500 },
+    );
   }
 }
 
