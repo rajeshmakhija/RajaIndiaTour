@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { revalidateTag } from "next/cache";
 import { BlobNotFoundError, BlobPreconditionFailedError, del, get, list, put } from "@vercel/blob";
 import type { GeneratedPost, PostEdit } from "@/lib/blog/types";
 
@@ -18,6 +19,9 @@ const FS_HIDDEN = path.join(FS_DIR, "_hidden.json");
 const BLOB_PREFIX = "blog/posts/";
 const BLOB_HIDDEN = "blog/_hidden.json";
 const BLOB_CRON_PREFIX = "blog/cron/";
+
+/** Cache tag for the public post list (lib/blog/posts.ts); cleared on every write. */
+export const BLOG_CACHE_TAG = "blog-posts";
 
 /** Private Blob store — must match the store access mode in Vercel. */
 const BLOB_ACCESS = "private" as const;
@@ -174,6 +178,7 @@ export async function savePost(post: GeneratedPost, overwrite = false): Promise<
 
   if (hasBlobStorage()) {
     await putBlobJson(blobPath(post.slug), body, overwrite);
+    revalidateTag(BLOG_CACHE_TAG);
     return post;
   }
 
@@ -201,6 +206,7 @@ export async function deletePost(slug: string): Promise<boolean> {
   if (hasBlobStorage()) {
     try {
       await del(blobPath(slug));
+      revalidateTag(BLOG_CACHE_TAG);
       return true;
     } catch {
       return false;
@@ -246,6 +252,7 @@ export async function setHidden(slug: string, hidden: boolean): Promise<string[]
 
   if (hasBlobStorage()) {
     await putBlobJson(BLOB_HIDDEN, body);
+    revalidateTag(BLOG_CACHE_TAG);
     return next;
   }
 

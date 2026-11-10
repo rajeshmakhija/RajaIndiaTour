@@ -1,5 +1,16 @@
+import { unstable_cache } from "next/cache";
 import { blogPosts, type BlogPost } from "@/lib/data/blog";
-import { getHiddenSlugs, listPublished } from "@/lib/blog/store";
+import { BLOG_CACHE_TAG, getHiddenSlugs, listPublished } from "@/lib/blog/store";
+
+/**
+ * One Blob list+read per day (or per write, via BLOG_CACHE_TAG) instead of per
+ * render — uncached reads exhausted the Hobby Blob quota and got the store suspended.
+ */
+const readBlogBlobs = unstable_cache(
+  () => Promise.all([listPublished(), getHiddenSlugs()]),
+  ["blog-blobs"],
+  { revalidate: 86400, tags: [BLOG_CACHE_TAG] },
+);
 
 /**
  * Everything the public blog shows: the hand-written posts in
@@ -10,7 +21,7 @@ export async function getAllPosts(): Promise<BlogPost[]> {
   let generated: BlogPost[] = [];
   let hidden: string[] = [];
   try {
-    [generated, hidden] = await Promise.all([listPublished(), getHiddenSlugs()]);
+    [generated, hidden] = await readBlogBlobs();
   } catch {
     // Read-only or missing content dir: fall back to the static posts.
     generated = [];
