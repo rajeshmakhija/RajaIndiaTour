@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Playfair_Display, DM_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { DeferredWidgets } from "@/components/conversion/DeferredWidgets";
@@ -14,20 +14,20 @@ import "./globals.css";
 const GA_MEASUREMENT_ID = "G-MJP0XCBHE9";
 const GTM_ID = "GTM-K4JHVHJQ";
 
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "700"],
+// Self-hosted variable fonts: next/font/google fetches at build time and
+// intermittently crashed Vercel builds when Google Fonts misresponded.
+const playfair = localFont({
+  src: "./fonts/playfair-display-latin.woff2",
+  weight: "400 900",
   variable: "--font-playfair",
   display: "swap",
-  preload: true,
 });
 
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+const dmSans = localFont({
+  src: "./fonts/dm-sans-latin.woff2",
+  weight: "100 1000",
   variable: "--font-dm-sans",
   display: "swap",
-  preload: true,
 });
 
 export const metadata: Metadata = createMetadata({});
