@@ -38,9 +38,12 @@ export function geminiModel(): string {
 
 /** Models are tried in order; the fallback list can be configured per environment. */
 export function geminiModels(): string[] {
+  // Always prefer the currently reliable lite model first — even if GEMINI_MODEL
+  // on Vercel still points at an overloaded model like gemini-3.8-flash.
   return [...new Set([
+    "gemini-3.5-flash-lite",
     geminiModel(),
-    ...(process.env.GEMINI_FALLBACK_MODELS || "gemini-3.8-flash,gemini-3.6-flash")
+    ...(process.env.GEMINI_FALLBACK_MODELS || "gemini-3.6-flash,gemini-3.8-flash")
       .split(",")
       .map((model) => model.trim())
       .filter(Boolean),
