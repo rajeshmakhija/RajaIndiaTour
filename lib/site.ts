@@ -15,6 +15,11 @@ export const siteConfig = {
     description:
       "Guide agréé par le gouvernement indien et le ministère du tourisme. Je organise des voyages sur mesure, sans intermédiaire, pour les voyageurs français.",
   },
+  /**
+   * Official profiles (Google Business, Tripadvisor, Instagram, Facebook, YouTube…).
+   * Emitted as schema.org sameAs so AI engines tie third-party mentions to this site.
+   */
+  profiles: [] as string[],
   trust: {
     rating: 4.8,
     reviews: 120,

@@ -9,6 +9,10 @@ export function organizationSchema() {
     description:
       "Agence de voyage en Inde spécialisée pour les clients français. Circuits sur mesure avec guide francophone.",
     areaServed: { "@type": "Country", name: "France" },
+    email: siteConfig.email,
+    telephone: siteConfig.phoneTel,
+    knowsLanguage: ["fr", "en"],
+    ...(siteConfig.profiles.length ? { sameAs: siteConfig.profiles } : {}),
     founder: {
       "@type": "Person",
       name: siteConfig.founder.name,

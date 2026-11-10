@@ -2,7 +2,11 @@ import Image from "next/image";
 import { ExternalLink, Star } from "lucide-react";
 import { routardReviews } from "@/lib/data/content";
 
+// Only real reviews (linked to an actual Routard thread); placeholders stay hidden.
+const realReviews = routardReviews.filter((review) => review.url !== "https://www.routard.com/");
+
 export function RoutardReviews() {
+  if (!realReviews.length) return null;
   return (
     <section id="avis-routard" className="border-b border-cream-dark bg-white py-12 px-4 md:py-14">
       <div className="mx-auto max-w-6xl">
@@ -33,7 +37,7 @@ export function RoutardReviews() {
         </div>
 
         <div className="grid gap-5 md:grid-cols-3">
-          {routardReviews.map((review, i) => (
+          {realReviews.map((review, i) => (
             <article
               key={`${review.author}-${i}`}
               className="flex flex-col rounded-xl border border-cream-dark bg-white p-5 shadow-sm"

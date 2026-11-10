@@ -87,7 +87,10 @@ RÈGLES DE RÉDACTION
 6. Les informations administratives (visa, vaccins, douane) changent : formule-les prudemment et invite à vérifier la source officielle.
 7. Chaque paragraphe est un élément du tableau "content", en texte brut (pas de Markdown, pas de titres, pas de listes à puces).
 8. Rédige 7 à 11 paragraphes de 2 à 5 phrases. Le dernier paragraphe invite doucement à demander un devis gratuit à Raja.
-9. Ne répète pas un sujet déjà traité : ${existing}.`;
+9. Ne répète pas un sujet déjà traité : ${existing}.
+10. Le PREMIER paragraphe répond directement à la question en 2 ou 3 phrases autonomes (ex. « La meilleure période pour le Rajasthan va d'octobre à mars… »), compréhensibles sans le reste de l'article : c'est le passage que Google et les assistants IA citeront.
+11. Chaque paragraphe suivant traite UNE sous-question précise et commence par une phrase qui en donne la réponse. Privilégie les faits concrets et vérifiables : mois, durées en jours, distances ou temps de trajet approximatifs, noms de lieux réels.
+12. Mentionne naturellement, une fois, l'expérience de terrain de Raja (guide francophone agréé, ${siteConfig.founder.experience} d'expérience) quand elle apporte un conseil utile.`;
 }
 
 /** Field-by-field description of the expected article, shared by both providers. */
