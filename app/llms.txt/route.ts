@@ -32,8 +32,7 @@ ${travelGuides.map((g) => `- [${g.title}](${url(`/guides/${g.slug}`)}): ${g.desc
 ${posts.map((p) => `- [${p.title}](${url(`/blog/${p.slug}`)}): ${p.excerpt}`).join("\n")}
 
 ## Avis de voyageurs
-- [Fil « Agence Raja India Tour en Inde » sur le forum du Routard](${siteConfig.reviewLinks.routard})
-- [Avis Tripadvisor](${siteConfig.reviewLinks.tripadvisor})
+- [Fil « Agence Raja India Tour en Inde » sur le forum du Routard](${siteConfig.reviewLinks.routard})${siteConfig.reviewLinks.tripadvisor ? `\n- [Avis Tripadvisor](${siteConfig.reviewLinks.tripadvisor})` : ""}
 
 ## À propos
 - [Qui sommes-nous](${url("/a-propos")})

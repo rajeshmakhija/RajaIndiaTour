@@ -23,8 +23,8 @@ export const siteConfig = {
   /** Public third-party reviews, linked from the homepage. */
   reviewLinks: {
     routard: "https://www.routard.com/forums/t/agence-raja-india-tour-en-inde/195424",
-    tripadvisor:
-      "https://www.tripadvisor.in/ShowUserReviews-g304551-d16939743-r728338473-India_Tour_Packages_Tours_Activities-New_Delhi_National_Capital_Territory_of_De.html",
+    // Add our own Tripadvisor listing here once it exists (the existing review sits on another company's page).
+    tripadvisor: "",
   },
   trust: {
     rating: 4.8,

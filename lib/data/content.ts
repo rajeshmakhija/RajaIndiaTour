@@ -102,28 +102,30 @@ export const circuits = [
   },
 ];
 
-/** Avis Routard.com — remplacer url et texte par les liens réels fournis par Raja */
+/**
+ * Real posts from the Routard thread "Agence Raja India tour en Inde" (topic 195424),
+ * quoted verbatim (shortened with "…"). Forum posts carry no star rating.
+ */
+const ROUTARD_THREAD = "https://www.routard.com/forums/t/agence-raja-india-tour-en-inde/195424";
+
 export const routardReviews = [
   {
-    author: "Voyageur Routard",
-    date: "À compléter",
-    rating: 5,
-    text: "Commentaire à ajouter — envoyez-nous le lien et le texte de l'avis Routard.",
-    url: "https://www.routard.com/",
+    author: "jacques-fauveau",
+    date: "Décembre 2018",
+    text: "Je viens de rentrer d'un séjour en Inde de 20 jours (2 semaines Rajasthan-5 jours au Kerala) organisé par Rajesh de Raja india tour. Tout a été parfait… Organisation sans faille, chauffeur et guides (dont la plupart parlaient français) ponctuels, hôtels (principalement hôtels de charme) conformes à nos attentes… Je ne pourrai que recommander Raja India Tour sans restriction.",
+    url: `${ROUTARD_THREAD}/36`,
   },
   {
-    author: "Voyageur Routard",
-    date: "À compléter",
-    rating: 5,
-    text: "Commentaire à ajouter — envoyez-nous le lien et le texte de l'avis Routard.",
-    url: "https://www.routard.com/",
+    author: "oups33",
+    date: "Mars 2019",
+    text: "Nous venons de faire un voyage avec Raja tour de 23 jours… Nous avons eu aucun problème. Les différents chauffeurs que nous avons eu dans les régions ont tous été sérieux, très attentionnés et prudents… Si on retourne en Inde on recontactera cette agence les yeux fermés.",
+    url: `${ROUTARD_THREAD}/39`,
   },
   {
-    author: "Voyageur Routard",
-    date: "À compléter",
-    rating: 5,
-    text: "Commentaire à ajouter — envoyez-nous le lien et le texte de l'avis Routard.",
-    url: "https://www.routard.com/",
+    author: "claude-et-eliane",
+    date: "Mars 2019",
+    text: "Nous revenons d'un séjour au Rajasthan avec Raja India Tour… Des hôtels de charme magnifiques. Des chauffeurs disponibles et des véhicules très propres. Le circuit que nous avions défini a été respecté dans sa totalité. Il n'y a pas de mauvaises surprises. Faites confiance à Raja India Tour, vous ne serez pas déçu.",
+    url: `${ROUTARD_THREAD}/40`,
   },
 ];
 

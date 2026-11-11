@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ExternalLink, Star } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { routardReviews } from "@/lib/data/content";
 import { siteConfig } from "@/lib/site";
 
@@ -20,16 +20,18 @@ export function RoutardReviews() {
               Lisez ce que nos voyageurs disent de nous
             </h2>
             <p className="mt-2 text-sm text-muted">
-              Témoignages publiés par des voyageurs sur le forum du Routard et sur Tripadvisor.
+              Témoignages publiés par des voyageurs sur le forum du Routard.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
             <a href={siteConfig.reviewLinks.routard} target="_blank" rel="noopener noreferrer" className={linkClass}>
               Forum Routard <ExternalLink size={14} />
             </a>
-            <a href={siteConfig.reviewLinks.tripadvisor} target="_blank" rel="noopener noreferrer" className={linkClass}>
-              Tripadvisor <ExternalLink size={14} />
-            </a>
+            {siteConfig.reviewLinks.tripadvisor && (
+              <a href={siteConfig.reviewLinks.tripadvisor} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                Tripadvisor <ExternalLink size={14} />
+              </a>
+            )}
           </div>
         </div>
       </section>
@@ -41,11 +43,14 @@ export function RoutardReviews() {
         <div className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div>
             <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-brand-blue">
-              Avis vérifiés
+              Avis indépendants
             </p>
             <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">
               Ce que disent les voyageurs sur Routard.com
             </h2>
+            <a href={siteConfig.reviewLinks.routard} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-brand-blue hover:underline">
+              Lire toute la discussion sur le forum <ExternalLink size={12} />
+            </a>
           </div>
           <a
             href="https://www.routard.com/"
@@ -70,11 +75,7 @@ export function RoutardReviews() {
               key={`${review.author}-${i}`}
               className="flex flex-col rounded-xl border border-cream-dark bg-white p-5 shadow-sm"
             >
-              <div className="flex gap-1">
-                {Array.from({ length: review.rating }).map((_, j) => (
-                  <Star key={j} size={14} className="fill-brand-red text-brand-red" />
-                ))}
-              </div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-brand-blue">{review.date}</p>
               <p className="mt-3 flex-1 text-sm leading-relaxed text-muted">
                 &ldquo;{review.text}&rdquo;
               </p>
