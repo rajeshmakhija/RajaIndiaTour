@@ -1,12 +1,40 @@
 import Image from "next/image";
 import { ExternalLink, Star } from "lucide-react";
 import { routardReviews } from "@/lib/data/content";
+import { siteConfig } from "@/lib/site";
 
 // Only real reviews (linked to an actual Routard thread); placeholders stay hidden.
 const realReviews = routardReviews.filter((review) => review.url !== "https://www.routard.com/");
 
+const linkClass =
+  "inline-flex items-center gap-1.5 rounded-full border border-brand-blue px-5 py-2.5 text-sm font-semibold text-brand-blue hover:bg-brand-blue hover:text-white";
+
 export function RoutardReviews() {
-  if (!realReviews.length) return null;
+  if (!realReviews.length) {
+    return (
+      <section id="avis-routard" className="border-b border-cream-dark bg-white py-12 px-4 md:py-14">
+        <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+          <div>
+            <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-brand-blue">Avis indépendants</p>
+            <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">
+              Lisez ce que nos voyageurs disent de nous
+            </h2>
+            <p className="mt-2 text-sm text-muted">
+              Témoignages publiés par des voyageurs sur le forum du Routard et sur Tripadvisor.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <a href={siteConfig.reviewLinks.routard} target="_blank" rel="noopener noreferrer" className={linkClass}>
+              Forum Routard <ExternalLink size={14} />
+            </a>
+            <a href={siteConfig.reviewLinks.tripadvisor} target="_blank" rel="noopener noreferrer" className={linkClass}>
+              Tripadvisor <ExternalLink size={14} />
+            </a>
+          </div>
+        </div>
+      </section>
+    );
+  }
   return (
     <section id="avis-routard" className="border-b border-cream-dark bg-white py-12 px-4 md:py-14">
       <div className="mx-auto max-w-6xl">
