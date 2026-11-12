@@ -63,6 +63,13 @@ export const TOPIC_IDEAS = [
   "Assister à un festival indien : Holi, Diwali, Pushkar",
   "Le Kerala en famille : rythme, étapes et conseils",
   "Préparer sa valise pour un voyage au Ladakh",
+  // Month-by-month intent (Kuoni-style "où partir en…"), India-specific.
+  ...["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"].map(
+    (month) => `Partir en Inde en ${month}`
+  ),
+  "Voyage de noces en Inde : itinéraire romantique et conseils",
+  "Circuit privé en Inde avec chauffeur : comment ça marche ?",
+  "Voyage en Inde pour seniors : rythme, confort et conseils",
 ];
 
 export function buildSystemPrompt(): string {
