@@ -106,6 +106,21 @@ export default async function BlogPostPage({ params }: Props) {
           ))}
         </div>
 
+        {post.links?.length ? (
+          <nav aria-label="Pour aller plus loin" className="mt-10 border-t border-cream-dark pt-6">
+            <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-brand-blue">Pour aller plus loin</p>
+            <ul className="grid gap-2 sm:grid-cols-2">
+              {post.links.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="font-medium text-ink underline decoration-brand-blue/40 underline-offset-4 hover:text-brand-blue">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ) : null}
+
         <div className="mt-10 rounded-xl border border-cream-dark bg-white p-6 text-center shadow-sm">
           <p className="font-display text-xl font-bold text-ink">
             Prêt à organiser votre voyage ?
