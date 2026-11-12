@@ -4,6 +4,7 @@ import { getAllPosts } from "@/lib/blog/posts";
 import { getAllDestinationSlugs } from "@/lib/data/destinations";
 import { getAllTourSlugs } from "@/lib/data/tours";
 import { getAllGuideSlugs } from "@/lib/data/guides";
+import { landings } from "@/lib/data/landings";
 
 /** Newly published blog posts must reach the sitemap without a rebuild. */
 export const revalidate = 86400;
@@ -30,6 +31,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/guides", changeFrequency: "monthly", priority: 0.85 },
     ...getAllDestinationSlugs().map((slug) => ({
       path: `/destinations/${slug}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.85,
+    })),
+    ...landings.map((landing) => ({
+      path: `/voyages/${landing.slug}`,
       changeFrequency: "monthly" as const,
       priority: 0.85,
     })),

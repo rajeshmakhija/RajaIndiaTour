@@ -3,6 +3,7 @@ import { tours } from "@/lib/data/tours";
 import { destinationPages } from "@/lib/data/destinations";
 import { travelGuides } from "@/lib/data/guides";
 import { getAllPosts } from "@/lib/blog/posts";
+import { landings } from "@/lib/data/landings";
 
 export const revalidate = 86400;
 
@@ -18,6 +19,9 @@ export async function GET() {
 - Langues : français, anglais
 - Contact : ${siteConfig.email} · WhatsApp ${siteConfig.phoneTel}
 - Devis gratuit et itinéraire personnalisé : ${url("/creer-mon-itineraire")}
+
+## Types de voyage
+${landings.map((l) => `- [${l.title}](${url(`/voyages/${l.slug}`)}): ${l.description}`).join("\n")}
 
 ## Circuits
 ${tours.map((t) => `- [${t.title}](${url(`/circuits/${t.slug}`)}): ${t.facts.duration}`).join("\n")}

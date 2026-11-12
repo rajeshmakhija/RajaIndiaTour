@@ -61,8 +61,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             } catch (e) {}
           `}
         </Script>
-        {/* 2. Google Tag Manager */}
-        <Script id="google-tag-manager" strategy="beforeInteractive">
+        {/* 2. Google Tag Manager — after page load: it cost ~1 s of main-thread time on
+            mobile. Events pushed to dataLayer earlier are queued, consent default runs first. */}
+        <Script id="google-tag-manager" strategy="lazyOnload">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
@@ -84,9 +85,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         {/* Google tag (gtag.js) — loaded once for every page */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="google-analytics" strategy="afterInteractive">
+        <Script id="google-analytics" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}

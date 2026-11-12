@@ -16,7 +16,8 @@ import {
 } from "lucide-react";
 import { createMetadata } from "@/lib/seo/metadata";
 import { Button, JsonLd } from "@/components/ui";
-import { breadcrumbSchema, faqSchema } from "@/lib/seo/schema";
+import { breadcrumbSchema } from "@/lib/seo/schema";
+import { FORMALITIES, PRICE_FAQ, PracticalFaq, TIME_DIFFERENCE, VISA_FAQ } from "@/components/sections/PracticalFaq";
 import { ItineraryOverview } from "@/components/tours/ItineraryOverview";
 import { getAllTourSlugs, getTourBySlug } from "@/lib/data/tours";
 import { getDestinationForTour } from "@/lib/data/destinations";
@@ -33,7 +34,7 @@ export async function generateMetadata({ params }: Props) {
   const tour = getTourBySlug(slug);
   if (!tour) return {};
   return createMetadata({
-    title: tour.title,
+    title: tour.seoTitle ?? tour.title,
     description: tour.subtitle,
     path: `/circuits/${tour.slug}`,
   });
@@ -63,8 +64,8 @@ export default async function TourPage({ params }: Props) {
   const practical: [string, string][] = [
     ["Durée", tour.facts.duration],
     ["Meilleure période", season],
-    ["Décalage horaire", "+4 h 30 en hiver, +3 h 30 en été (par rapport à la France)"],
-    ["Formalités", "Passeport valide et visa électronique (e-Visa) à demander avant le départ"],
+    ["Décalage horaire", TIME_DIFFERENCE],
+    ["Formalités", FORMALITIES],
   ];
   const faq = [
     {
@@ -79,14 +80,8 @@ export default async function TourPage({ params }: Props) {
       question: "Quelle est la meilleure période pour ce circuit ?",
       answer: `La période conseillée est : ${season.toLowerCase()}. Raja vous indique la meilleure option selon vos dates précises.`,
     },
-    {
-      question: "Quel est le prix de ce circuit ?",
-      answer: "Le prix dépend de la saison, du nombre de voyageurs et de la catégorie d'hôtels. Raja vous envoie un devis détaillé et gratuit, sans frais d'agence intermédiaire.",
-    },
-    {
-      question: "Faut-il un visa pour ce voyage ?",
-      answer: "Oui, les voyageurs français ont besoin d'un visa pour l'Inde. Le visa électronique (e-Visa) se demande en ligne, uniquement sur le site officiel du gouvernement indien.",
-    },
+    PRICE_FAQ,
+    VISA_FAQ,
   ];
 
   const tripSchema = {
@@ -137,7 +132,7 @@ export default async function TourPage({ params }: Props) {
 
           <div className="grid grid-cols-3 grid-rows-2 gap-3 h-[280px] md:h-[380px]">
             <div className="relative col-span-2 row-span-2 overflow-hidden rounded-2xl shadow-sm">
-              <Image src={heroLarge} alt={tour.title} fill className="object-cover" sizes="(max-width:768px) 66vw, 400px" priority />
+              <Image src={heroLarge} alt={tour.title} fill className="object-cover" sizes="(max-width:768px) 66vw, 400px" priority fetchPriority="high" />
             </div>
             <div className="relative overflow-hidden rounded-2xl shadow-sm">
               <Image src={heroSmall1} alt={tour.title} fill className="object-cover" sizes="200px" />
@@ -286,34 +281,7 @@ export default async function TourPage({ params }: Props) {
         </div>
       </section>
 
-      {/* Practical info + FAQ (visible text mirrors the FAQPage schema) */}
-      <section className="border-t border-cream-dark bg-cream-dark/20 px-4 py-12 md:py-16">
-        <JsonLd data={faqSchema(faq)} />
-        <div className="mx-auto max-w-3xl">
-          <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">Infos pratiques et questions fréquentes</h2>
-          <dl className="mt-6 grid gap-4 sm:grid-cols-2">
-            {practical.map(([label, value]) => (
-              <div key={label} className="rounded-xl border border-cream-dark bg-white p-4">
-                <dt className="text-xs font-semibold uppercase tracking-wide text-brand-blue">{label}</dt>
-                <dd className="mt-1 text-sm text-ink">{value}</dd>
-              </div>
-            ))}
-          </dl>
-          <div className="mt-8 space-y-3">
-            {faq.map((item) => (
-              <details key={item.question} className="rounded-xl border border-cream-dark bg-white p-4">
-                <summary className="cursor-pointer font-semibold text-ink">{item.question}</summary>
-                <p className="mt-2 text-sm leading-relaxed text-muted">{item.answer}</p>
-              </details>
-            ))}
-          </div>
-          <p className="mt-6 text-sm text-muted">
-            À lire aussi : <Link href="/blog/visa-inde-voyageurs-francais" className="text-brand-blue hover:underline">le visa pour l&apos;Inde</Link>,{" "}
-            <Link href="/blog/budget-voyage-inde" className="text-brand-blue hover:underline">quel budget prévoir</Link> et{" "}
-            <Link href="/guides/calendrier-voyage-inde" className="text-brand-blue hover:underline">quand partir mois par mois</Link>.
-          </p>
-        </div>
-      </section>
+      <PracticalFaq practical={practical} faq={faq} />
 
       {/* Bottom CTA */}
       <section className="border-t border-cream-dark px-4 py-14 md:py-16">

@@ -38,3 +38,32 @@ export async function getAllPosts(): Promise<BlogPost[]> {
 export async function getPublicPostBySlug(slug: string): Promise<BlogPost | undefined> {
   return (await getAllPosts()).find((p) => p.slug === slug);
 }
+
+const MONTHS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+
+/** ISO date: generated posts carry createdAt; static ones a French "18 octobre 2026". */
+export function postIsoDate(post: BlogPost & { createdAt?: string }): string | undefined {
+  if (post.createdAt) return post.createdAt;
+  const m = post.date.toLowerCase().match(/^(\d{1,2}) (\S+) (\d{4})$/);
+  const month = m ? MONTHS.indexOf(m[2]) + 1 : 0;
+  return m && month ? `${m[3]}-${String(month).padStart(2, "0")}-${m[1].padStart(2, "0")}` : undefined;
+}
+
+export async function getLatestPosts(count: number): Promise<BlogPost[]> {
+  return (await getAllPosts())
+    .slice()
+    .sort((a, b) => (postIsoDate(b) ?? "").localeCompare(postIsoDate(a) ?? ""))
+    .slice(0, count);
+}
+
+/** Same category first, then most shared title words; excludes the post itself. */
+export async function getRelatedPosts(post: BlogPost, count: number): Promise<BlogPost[]> {
+  const words = (text: string) => new Set(text.toLowerCase().split(/[^a-zà-ÿ]+/).filter((w) => w.length > 3));
+  const mine = words(post.title);
+  const score = (other: BlogPost) =>
+    (other.category === post.category ? 10 : 0) + [...words(other.title)].filter((w) => mine.has(w)).length;
+  return (await getAllPosts())
+    .filter((other) => other.slug !== post.slug)
+    .sort((a, b) => score(b) - score(a))
+    .slice(0, count);
+}

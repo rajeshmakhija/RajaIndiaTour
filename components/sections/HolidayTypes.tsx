@@ -20,7 +20,7 @@ const holidayTypes = [
     title: "Vacances en famille",
     description:
       "Éléphants, forts et rickshaws : un rythme adapté aux enfants, des étapes courtes et des hôtels avec piscine.",
-    href: "/contact?style=famille",
+    href: "/voyages/inde-en-famille",
     image: "/images/destinations/rajasthan.jpg",
     className: "min-h-[240px] md:min-h-0",
   },
@@ -30,7 +30,7 @@ const holidayTypes = [
     title: "Lunes de miel",
     description:
       "Backwaters en houseboat privé, palais au bord de l'eau et dîners aux chandelles.",
-    href: "/destinations/kerala",
+    href: "/voyages/voyage-de-noces-inde",
     image: "/images/destinations/places/kerala-canoe.jpg",
     className: "min-h-[240px] md:min-h-0",
   },

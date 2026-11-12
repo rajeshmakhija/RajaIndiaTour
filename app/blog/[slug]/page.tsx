@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { Calendar, Clock, ArrowLeft } from "lucide-react";
 import { createMetadata } from "@/lib/seo/metadata";
-import { getAllPosts, getPublicPostBySlug } from "@/lib/blog/posts";
+import { getAllPosts, getPublicPostBySlug, getRelatedPosts, postIsoDate } from "@/lib/blog/posts";
+import { PostCard } from "@/components/blog/PostCard";
 import { Button, JsonLd } from "@/components/ui";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 import { siteConfig } from "@/lib/site";
@@ -24,16 +25,6 @@ const MISSING_POST_REDIRECTS: Record<string, string> = {
   "voyage-rajasthan-et-benares-itineraire": "/circuits/tour-inde-du-nord-16-jours",
   "visa-inde-voyageurs-francais-mode-d-emploi": "/blog/visa-inde-voyageurs-francais",
 };
-
-const MONTHS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
-
-/** ISO date for schema: generated posts carry createdAt; static ones a French "18 octobre 2026". */
-function isoDate(post: { date: string; createdAt?: string }): string | undefined {
-  if (post.createdAt) return post.createdAt;
-  const m = post.date.toLowerCase().match(/^(\d{1,2}) (\S+) (\d{4})$/);
-  const month = m ? MONTHS.indexOf(m[2]) + 1 : 0;
-  return m && month ? `${m[3]}-${String(month).padStart(2, "0")}-${m[1].padStart(2, "0")}` : undefined;
-}
 
 export const revalidate = 86400;
 
@@ -60,7 +51,8 @@ export default async function BlogPostPage({ params }: Props) {
     notFound();
   }
 
-  const published = isoDate(post);
+  const published = postIsoDate(post);
+  const related = await getRelatedPosts(post, 3);
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -113,6 +105,7 @@ export default async function BlogPostPage({ params }: Props) {
             className="object-cover"
             sizes="768px"
             priority
+            fetchPriority="high"
           />
         </div>
 
@@ -149,6 +142,17 @@ export default async function BlogPostPage({ params }: Props) {
           </Button>
         </div>
       </div>
+
+      {related.length > 0 && (
+        <section aria-labelledby="articles-lies" className="mx-auto mt-14 max-w-6xl border-t border-cream-dark pt-10">
+          <h2 id="articles-lies" className="font-display text-2xl font-bold text-ink md:text-3xl">Articles liés</h2>
+          <div className="mt-6 grid gap-6 md:grid-cols-3">
+            {related.map((item) => (
+              <PostCard key={item.slug} post={item} />
+            ))}
+          </div>
+        </section>
+      )}
     </article>
   );
 }

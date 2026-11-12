@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { siteConfig } from "@/lib/site";
 import { Logo } from "@/components/layout/Logo";
+import { landings } from "@/lib/data/landings";
 
 const footerLinks = {
   destinations: [
@@ -24,7 +25,7 @@ const footerLinks = {
 export function Footer() {
   return (
     <footer className="site-footer border-t border-cream-dark bg-white">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-3">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-4">
         <div className="md:col-span-1">
           <Logo />
           <p className="mt-4 text-sm text-muted leading-relaxed">
@@ -48,6 +49,19 @@ export function Footer() {
               <li key={l.label}>
                 <Link href={l.href} className="text-sm text-muted hover:text-brand-blue transition-colors">
                   {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <p className="mb-4 text-sm font-semibold uppercase tracking-wider text-brand-red">Types de voyage</p>
+          <ul className="space-y-2">
+            {landings.map((l) => (
+              <li key={l.slug}>
+                <Link href={`/voyages/${l.slug}`} className="text-sm text-muted hover:text-brand-blue transition-colors">
+                  {l.title}
                 </Link>
               </li>
             ))}

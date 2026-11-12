@@ -11,6 +11,7 @@ import {
 import { createMetadata } from "@/lib/seo/metadata";
 import { SectionHeading, Button, JsonLd } from "@/components/ui";
 import { breadcrumbSchema } from "@/lib/seo/schema";
+import { FORMALITIES, PRICE_FAQ, PracticalFaq, TIME_DIFFERENCE, VISA_FAQ } from "@/components/sections/PracticalFaq";
 import { PlacesCarousel } from "@/components/destinations/PlacesCarousel";
 import { getTourBySlug } from "@/lib/data/tours";
 import {
@@ -46,6 +47,65 @@ function relatedBlogs(dest: DestinationPage) {
   });
 }
 
+/** Nepal and Bhutan are separate countries: own time zone and visa rules. */
+const OUTSIDE_INDIA: Record<string, { time: string; formalities: string }> = {
+  nepal: {
+    time: "+4 h 45 en hiver, +3 h 45 en été (par rapport à la France)",
+    formalities: "Passeport valide et visa népalais : Raja vous indique les démarches",
+  },
+  bhoutan: {
+    time: "+5 h en hiver, +4 h en été (par rapport à la France)",
+    formalities: "Passeport valide et visa bhoutanais, obtenu via votre voyage organisé",
+  },
+};
+
+/** French preposition + name ("au Rajasthan", "à Goa", "en Inde du Sud"). */
+function inPlace(dest: DestinationPage): string {
+  const special: Record<string, string> = {
+    nord: "en Inde du Nord",
+    sud: "en Inde du Sud",
+    goa: "à Goa",
+    varanasi: "à Varanasi",
+    "triangle-dor": "dans le Triangle d'Or",
+  };
+  return special[dest.slug] ?? `au ${dest.name}`;
+}
+
+function destinationFaq(dest: DestinationPage) {
+  const place = inPlace(dest);
+  const abroad = OUTSIDE_INDIA[dest.slug];
+  const days = dest.itineraries.map((it) => it.days);
+  const minDays = Math.min(...days);
+  const maxDays = Math.max(...days);
+  const practical: [string, string][] = [
+    ["Meilleure période", dest.bestSeason],
+    ["Durée conseillée", minDays === maxDays ? `${minDays} jours` : `${minDays} à ${maxDays} jours`],
+    ["Décalage horaire", abroad?.time ?? TIME_DIFFERENCE],
+    ["Formalités", abroad?.formalities ?? FORMALITIES],
+  ];
+  const faq = [
+    {
+      question: `Quand partir ${place} ?`,
+      answer: `La période conseillée est : ${dest.bestSeason.toLowerCase()}. Raja ajuste l'itinéraire selon vos dates exactes et la météo de chaque étape.`,
+    },
+    {
+      question: `Combien de jours prévoir ${place} ?`,
+      answer: `Nos itinéraires vont de ${minDays} à ${maxDays} jours. C'est un point de départ : Raja adapte la durée, le rythme et les étapes à vos envies.`,
+    },
+    {
+      question: `Que voir ${place} ?`,
+      answer: `Les étapes incontournables sont : ${dest.cities.join(", ")}.`,
+    },
+    {
+      question: "Le voyage est-il privé ?",
+      answer: "Oui. Vous voyagez seuls (en couple, en famille ou entre amis) avec votre voiture et votre chauffeur, sans groupe ni horaires imposés.",
+    },
+    PRICE_FAQ,
+    ...(abroad ? [] : [VISA_FAQ]),
+  ];
+  return { practical, faq };
+}
+
 export default async function DestinationDetailPage({ params }: Props) {
   const { slug } = await params;
   const dest = getDestinationBySlug(slug);
@@ -64,6 +124,7 @@ export default async function DestinationDetailPage({ params }: Props) {
           alt={dest.name}
           fill
           priority
+          fetchPriority="high"
           className="object-cover"
           sizes="100vw"
         />
@@ -328,6 +389,8 @@ export default async function DestinationDetailPage({ params }: Props) {
           )}
         </div>
       </section>
+
+      <PracticalFaq {...destinationFaq(dest)} />
 
       {/* CTA */}
       <section className="border-b border-cream-dark px-4 py-14 md:py-16">

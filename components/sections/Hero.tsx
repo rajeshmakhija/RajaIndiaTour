@@ -83,6 +83,7 @@ export function Hero() {
           alt=""
           fill
           priority
+          fetchPriority="high"
           quality={70}
           sizes="100vw"
           className="object-cover object-center brightness-[1.1] contrast-[1.05] saturate-[1.05]"
@@ -96,7 +97,8 @@ export function Hero() {
             loop
             playsInline
             preload="none"
-            poster={HERO_POSTER}
+            // Optimized variant, not the 490 KB original file.
+            poster={`/_next/image?url=${encodeURIComponent(HERO_POSTER)}&w=1200&q=70`}
             className="absolute inset-0 h-full w-full object-cover object-center brightness-[1.15] contrast-[1.05] saturate-[1.08]"
             aria-label="Vidéo de présentation Raja India Tour"
           >

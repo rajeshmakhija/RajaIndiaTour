@@ -24,6 +24,8 @@ export interface Tour {
   slug: string;
   breadcrumb: string[];
   title: string;
+  /** Search-result title (<title>); the visible H1 stays `title`. */
+  seoTitle?: string;
   subtitle: string;
   intro: string;
   /** [large, small1, small2] */
@@ -40,6 +42,7 @@ export const tours: Tour[] = [
     slug: "tour-inde-du-nord-16-jours",
     breadcrumb: ["Asie", "Inde", "Rajasthan"],
     title: "Tour de l'Inde du Nord — la beauté du Rajasthan avec Bénarès",
+    seoTitle: "Circuit Inde du Nord 16 jours : Rajasthan et Bénarès en privé",
     subtitle:
       "Un grand voyage privé à travers Delhi, les cités royales et le désert du Rajasthan, Agra, Orchha, Khajuraho et la ville sainte de Bénarès.",
     intro:
@@ -216,6 +219,7 @@ export const tours: Tour[] = [
     slug: "tour-inde-du-sud-14-jours",
     breadcrumb: ["Asie", "Inde", "Inde du Sud"],
     title: "Tour de l'Inde du Sud — les perles du Sud",
+    seoTitle: "Circuit Inde du Sud 14 jours en privé : Tamil Nadu et Kerala",
     subtitle:
       "Un grand voyage privé du Tamil Nadu au Kerala et au Karnataka : temples dravidiens, comptoirs coloniaux, collines de thé, backwaters et palais du Sud.",
     intro:
@@ -381,6 +385,7 @@ export const tours: Tour[] = [
     slug: "tour-ladakh-14-jours",
     breadcrumb: ["Asie", "Inde", "Ladakh"],
     title: "Tour du Ladakh — la beauté de l'Himalaya",
+    seoTitle: "Circuit Ladakh 14 jours en privé avec guide francophone",
     subtitle:
       "Un grand voyage privé au cœur de l'Himalaya bouddhiste : Leh et les monastères de la vallée de l'Indus, la vallée de la Nubra par le Khardung La, et les lacs d'altitude Tso Moriri et Tso Kar.",
     intro:
@@ -541,6 +546,7 @@ export const tours: Tour[] = [
     slug: "tour-triangle-dor-5-jours",
     breadcrumb: ["Asie", "Inde", "Inde du Nord"],
     title: "Le Triangle d'Or — Delhi, Jaipur & Agra",
+    seoTitle: "Circuit Triangle d'Or 5 jours en privé : Delhi, Agra, Jaipur",
     subtitle:
       "Le circuit essentiel de l'Inde du Nord en cinq jours : la capitale entre Vieux et New Delhi, la ville rose de Jaipur, la cité fantôme de Fatehpur Sikri et le Taj Mahal.",
     intro:
@@ -628,6 +634,7 @@ export const tours: Tour[] = [
     slug: "tour-inde-du-sud-goa-20-jours",
     breadcrumb: ["Asie", "Inde", "Goa"],
     title: "Splendeur du Sud — du Tamil Nadu à Goa",
+    seoTitle: "Circuit Inde du Sud et Goa 20 jours en privé",
     subtitle:
       "Le grand traversée du sud de l'Inde en vingt jours : temples dravidiens, comptoirs français, plantations de thé, backwaters, ruines de Hampi et arrivée en douceur sur les plages de Goa.",
     intro:
@@ -838,6 +845,7 @@ export const tours: Tour[] = [
     slug: "rajasthan-classique-12-jours",
     breadcrumb: ["Asie", "Inde", "Rajasthan"],
     title: "Rajasthan classique — 12 jours",
+    seoTitle: "Circuit Rajasthan 12 jours en privé avec chauffeur",
     subtitle:
       "De Delhi au Taj Mahal, par Mandawa, Bikaner, Jaisalmer, Jodhpur, Ranakpur, Udaipur, Pushkar et Jaipur : le grand tour du Rajasthan en douze jours.",
     intro:
