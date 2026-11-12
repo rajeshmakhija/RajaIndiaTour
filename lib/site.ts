@@ -19,7 +19,7 @@ export const siteConfig = {
    * Official profiles (Google Business, Tripadvisor, Instagram, Facebook, YouTube…).
    * Emitted as schema.org sameAs so AI engines tie third-party mentions to this site.
    */
-  profiles: [] as string[],
+  profiles: ["https://www.facebook.com/RajaIndiaTour/", "https://x.com/RajaIndiaTour"] as string[],
   /** Public third-party reviews, linked from the homepage. */
   reviewLinks: {
     routard: "https://www.routard.com/forums/t/agence-raja-india-tour-en-inde/195424",

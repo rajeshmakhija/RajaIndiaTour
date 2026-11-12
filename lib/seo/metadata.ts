@@ -33,6 +33,7 @@ export function createMetadata({
       locale: "fr_FR",
       type: "website",
     },
+    twitter: { card: "summary_large_image", site: "@RajaIndiaTour", title: fullTitle, description: desc },
     robots: { index: true, follow: true },
   };
 }

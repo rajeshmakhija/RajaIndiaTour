@@ -31,6 +31,14 @@ export function Footer() {
             Voyages sur mesure en Inde pour voyageurs français. Guide francophone agréé depuis {siteConfig.founder.experience}.
           </p>
           <p className="mt-4 text-sm text-brand-blue font-medium">{siteConfig.domain}</p>
+          <p className="mt-3 flex gap-4 text-sm">
+            <a href="https://www.facebook.com/RajaIndiaTour/" target="_blank" rel="noopener noreferrer me" className="text-muted hover:text-brand-blue transition-colors">
+              Facebook
+            </a>
+            <a href="https://x.com/RajaIndiaTour" target="_blank" rel="noopener noreferrer me" className="text-muted hover:text-brand-blue transition-colors">
+              X (Twitter)
+            </a>
+          </p>
         </div>
 
         <div>
