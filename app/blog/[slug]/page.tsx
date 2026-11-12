@@ -13,13 +13,16 @@ interface Props {
 }
 
 /**
- * AI posts Google indexed that vanished when the Blob store was suspended (Search
- * Console 404s). Only used while the post is missing, so restored posts still show.
+ * Where a generated post's URL should go once it no longer exists: posts lost
+ * while the Blob store was suspended, and duplicates deleted in /admin/blog.
+ * Only used while the post is missing, so existing posts always win.
  */
 const MISSING_POST_REDIRECTS: Record<string, string> = {
   "preparer-premier-voyage-en-inde-conseils-itineraires": "/guides/premier-voyage-inde",
+  "reussir-son-premier-voyage-en-inde": "/guides/premier-voyage-inde",
   "comprendre-la-culture-indienne-guide-voyageur": "/guides/premier-voyage-inde",
   "voyage-rajasthan-et-benares-itineraire": "/circuits/tour-inde-du-nord-16-jours",
+  "visa-inde-voyageurs-francais-mode-d-emploi": "/blog/visa-inde-voyageurs-francais",
 };
 
 const MONTHS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
