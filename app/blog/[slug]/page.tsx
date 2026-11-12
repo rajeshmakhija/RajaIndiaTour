@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { Calendar, Clock, ArrowLeft } from "lucide-react";
 import { createMetadata } from "@/lib/seo/metadata";
 import { getAllPosts, getPublicPostBySlug } from "@/lib/blog/posts";
@@ -11,6 +11,16 @@ import { siteConfig } from "@/lib/site";
 interface Props {
   params: Promise<{ slug: string }>;
 }
+
+/**
+ * AI posts Google indexed that vanished when the Blob store was suspended (Search
+ * Console 404s). Only used while the post is missing, so restored posts still show.
+ */
+const MISSING_POST_REDIRECTS: Record<string, string> = {
+  "preparer-premier-voyage-en-inde-conseils-itineraires": "/guides/premier-voyage-inde",
+  "comprendre-la-culture-indienne-guide-voyageur": "/guides/premier-voyage-inde",
+  "voyage-rajasthan-et-benares-itineraire": "/circuits/tour-inde-du-nord-16-jours",
+};
 
 const MONTHS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 
@@ -42,7 +52,10 @@ export async function generateMetadata({ params }: Props) {
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
   const post = await getPublicPostBySlug(slug);
-  if (!post) notFound();
+  if (!post) {
+    if (MISSING_POST_REDIRECTS[slug]) permanentRedirect(MISSING_POST_REDIRECTS[slug]);
+    notFound();
+  }
 
   const published = isoDate(post);
   const articleSchema = {

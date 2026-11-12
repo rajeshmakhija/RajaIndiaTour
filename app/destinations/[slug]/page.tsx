@@ -211,7 +211,7 @@ export default async function DestinationDetailPage({ params }: Props) {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {dest.gallery.map((shot, i) => (
               <div
-                key={shot.src + i}
+                key={i}
                 className={`relative overflow-hidden rounded-2xl shadow-md ${
                   i === 0 ? "sm:col-span-2 sm:row-span-2 aspect-[4/3] sm:aspect-auto sm:min-h-[420px]" : "aspect-[4/3]"
                 }`}
