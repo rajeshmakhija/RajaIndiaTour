@@ -19,7 +19,7 @@ export default function ContactPage() {
   return (
     <div className="py-16 px-4">
       <div className="mx-auto max-w-4xl">
-        <SectionHeading
+        <SectionHeading as="h1"
           eyebrow="Contact"
           title="Demandez votre devis gratuit"
           subtitle="Raja prépare personnellement chaque voyage. Réponse sous 24h, sans engagement."

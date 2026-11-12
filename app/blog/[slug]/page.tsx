@@ -4,10 +4,22 @@ import { notFound } from "next/navigation";
 import { Calendar, Clock, ArrowLeft } from "lucide-react";
 import { createMetadata } from "@/lib/seo/metadata";
 import { getAllPosts, getPublicPostBySlug } from "@/lib/blog/posts";
-import { Button } from "@/components/ui";
+import { Button, JsonLd } from "@/components/ui";
+import { breadcrumbSchema } from "@/lib/seo/schema";
+import { siteConfig } from "@/lib/site";
 
 interface Props {
   params: Promise<{ slug: string }>;
+}
+
+const MONTHS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+
+/** ISO date for schema: generated posts carry createdAt; static ones a French "18 octobre 2026". */
+function isoDate(post: { date: string; createdAt?: string }): string | undefined {
+  if (post.createdAt) return post.createdAt;
+  const m = post.date.toLowerCase().match(/^(\d{1,2}) (\S+) (\d{4})$/);
+  const month = m ? MONTHS.indexOf(m[2]) + 1 : 0;
+  return m && month ? `${m[3]}-${String(month).padStart(2, "0")}-${m[1].padStart(2, "0")}` : undefined;
 }
 
 export const revalidate = 86400;
@@ -32,8 +44,24 @@ export default async function BlogPostPage({ params }: Props) {
   const post = await getPublicPostBySlug(slug);
   if (!post) notFound();
 
+  const published = isoDate(post);
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    image: `${siteConfig.url}${post.image}`,
+    inLanguage: "fr-FR",
+    ...(published ? { datePublished: published } : {}),
+    author: { "@type": "Person", name: siteConfig.founder.name, jobTitle: siteConfig.founder.title, url: `${siteConfig.url}/a-propos` },
+    publisher: { "@type": "TravelAgency", name: siteConfig.name, url: siteConfig.url },
+    mainEntityOfPage: `${siteConfig.url}/blog/${post.slug}`,
+  };
+
   return (
     <article className="border-b border-cream-dark bg-white px-4 py-12 md:py-16">
+      <JsonLd data={articleSchema} />
+      <JsonLd data={breadcrumbSchema([["Blog", "/blog"], [post.title, `/blog/${post.slug}`]])} />
       <div className="mx-auto max-w-3xl">
         <Link
           href="/blog"

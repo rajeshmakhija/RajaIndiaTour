@@ -17,7 +17,7 @@ export default function CircuitsPage() {
   return (
     <div className="border-b border-cream-dark bg-white px-4 py-14 md:py-16">
       <div className="mx-auto max-w-6xl">
-        <SectionHeading
+        <SectionHeading as="h1"
           eyebrow="Voyages sur mesure"
           title="Nos circuits"
           subtitle="Itinéraires personnalisés pour les voyageurs français — départ garanti, modifiables selon vos envies."

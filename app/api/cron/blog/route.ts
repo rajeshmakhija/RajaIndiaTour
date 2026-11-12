@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { generateDraft } from "@/lib/blog/generate";
 import { chooseBlogKeyword } from "@/lib/blog/keywords";
 import { claimPublicationDay, listPosts, savePost } from "@/lib/blog/store";
+import { siteConfig } from "@/lib/site";
 
 export const maxDuration = 300;
 
@@ -11,6 +12,40 @@ const PUBLISH_HOUR_UTC = 7;
 
 function nextPublicationTime(lastPublished: number): number {
   return (Math.floor(lastPublished / DAY_MS) + 3) * DAY_MS + PUBLISH_HOUR_UTC * 60 * 60 * 1000;
+}
+
+/**
+ * Best-effort email so Raja can enrich the post with first-hand experience
+ * (Google ranks experience; a generic AI article alone ranks poorly).
+ */
+async function notifyRaja(title: string, slug: string) {
+  if (!process.env.RESEND_API_KEY) return;
+  const domain = siteConfig.domain.replace(/^www\./, "");
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: `Raja India Tour <noreply@${domain}>`,
+        to: siteConfig.email,
+        subject: `[${domain}] Nouvel article publié — ajoutez votre expérience`,
+        text: [
+          `L'article « ${title} » vient d'être publié automatiquement :`,
+          `${siteConfig.url}/blog/${slug}`,
+          "",
+          "10 minutes pour le rendre bien meilleur sur Google :",
+          "- ajoutez 2 ou 3 phrases de votre expérience réelle (un conseil, une anecdote, une erreur à éviter) ;",
+          "- vérifiez les faits ;",
+          "- si possible, remplacez l'image par une de vos propres photos.",
+          "",
+          `Modifier l'article : ${siteConfig.url}/admin/blog`,
+        ].join("\n"),
+      }),
+    });
+    if (!res.ok) console.warn("Blog notification email failed with status", res.status);
+  } catch (error) {
+    console.warn("Blog notification email failed", error);
+  }
 }
 
 /** Vercel Cron calls GET daily; the persisted publication date enforces the cadence. */
@@ -51,6 +86,7 @@ async function handle(request: Request) {
       revalidatePath("/blog");
       revalidatePath(`/blog/${post.slug}`);
       revalidatePath("/sitemap.xml");
+      await notifyRaja(post.title, post.slug);
       return NextResponse.json({ published: post.slug, keyword, model: post.model, nextAt: new Date(nextPublicationTime(Date.parse(post.autoPublishedAt))).toISOString() });
     } finally {
       if (!published) await releaseClaim();

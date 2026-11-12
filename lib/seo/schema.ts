@@ -18,11 +18,22 @@ export function organizationSchema() {
       name: siteConfig.founder.name,
       jobTitle: "Guide francophone agréé",
     },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: siteConfig.trust.rating,
-      reviewCount: siteConfig.trust.reviews,
-    },
+    // No aggregateRating: Google treats self-declared ratings without a verifiable
+    // review source as spammy markup. Add it back once it can cite real reviews.
+  };
+}
+
+/** BreadcrumbList from [name, path] pairs, starting after "Accueil". */
+export function breadcrumbSchema(items: [name: string, path: string][]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [["Accueil", ""] as const, ...items].map(([name, path], i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name,
+      item: `${siteConfig.url}${path}`,
+    })),
   };
 }
 

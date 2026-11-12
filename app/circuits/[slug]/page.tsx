@@ -15,7 +15,8 @@ import {
   Phone,
 } from "lucide-react";
 import { createMetadata } from "@/lib/seo/metadata";
-import { Button } from "@/components/ui";
+import { Button, JsonLd } from "@/components/ui";
+import { breadcrumbSchema } from "@/lib/seo/schema";
 import { ItineraryOverview } from "@/components/tours/ItineraryOverview";
 import { getAllTourSlugs, getTourBySlug } from "@/lib/data/tours";
 import { getDestinationForTour } from "@/lib/data/destinations";
@@ -58,9 +59,25 @@ export default async function TourPage({ params }: Props) {
     `Bonjour Raja, je souhaite en savoir plus sur le circuit « ${tour.title} ».`
   )}`;
   const [heroLarge, heroSmall1, heroSmall2] = tour.gallery;
+  const tripSchema = {
+    "@context": "https://schema.org",
+    "@type": "TouristTrip",
+    name: tour.title,
+    description: tour.intro,
+    image: `${siteConfig.url}${heroLarge}`,
+    url: `${siteConfig.url}/circuits/${tour.slug}`,
+    touristType: tour.facts.bestFor,
+    provider: { "@type": "TravelAgency", name: siteConfig.name, url: siteConfig.url },
+    itinerary: {
+      "@type": "ItemList",
+      itemListElement: tour.days.map((day, i) => ({ "@type": "ListItem", position: i + 1, name: day.title })),
+    },
+  };
 
   return (
     <div className="bg-white">
+      <JsonLd data={tripSchema} />
+      <JsonLd data={breadcrumbSchema([["Circuits", "/circuits"], [tour.title, `/circuits/${tour.slug}`]])} />
       {/* Hero */}
       <section className="border-b border-cream-dark px-4 pt-10 pb-12 md:pt-14">
         <div className="mx-auto grid max-w-6xl items-center gap-8 lg:grid-cols-2 lg:gap-12">

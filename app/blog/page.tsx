@@ -21,7 +21,7 @@ export default async function BlogPage() {
   return (
     <div className="border-b border-cream-dark bg-white px-4 py-14 md:py-16">
       <div className="mx-auto max-w-6xl">
-        <SectionHeading
+        <SectionHeading as="h1"
           eyebrow="Blog"
           title="Conseils & guides pour voyager en Inde"
           subtitle="Visa, budget, saisons, destinations — tout pour préparer votre circuit sur mesure avec Raja."

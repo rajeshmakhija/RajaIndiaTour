@@ -19,11 +19,14 @@ export function SectionHeading({
   title,
   subtitle,
   light = false,
+  as: Heading = "h2",
 }: {
   eyebrow?: string;
   title: string;
   subtitle?: string;
   light?: boolean;
+  /** "h1" when this is the page's main heading. */
+  as?: "h1" | "h2";
 }) {
   return (
     <div className="mx-auto mb-8 max-w-2xl text-center">
@@ -32,9 +35,9 @@ export function SectionHeading({
           {eyebrow}
         </p>
       )}
-      <h2 className={`font-display text-3xl font-bold md:text-4xl ${light ? "text-white" : "text-ink"}`}>
+      <Heading className={`font-display text-3xl font-bold md:text-4xl ${light ? "text-white" : "text-ink"}`}>
         {title}
-      </h2>
+      </Heading>
       {subtitle && (
         <p className={`mt-4 text-lg ${light ? "text-white/80" : "text-muted"}`}>{subtitle}</p>
       )}

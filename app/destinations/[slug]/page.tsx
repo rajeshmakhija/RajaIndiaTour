@@ -9,7 +9,8 @@ import {
   Check,
 } from "lucide-react";
 import { createMetadata } from "@/lib/seo/metadata";
-import { SectionHeading, Button } from "@/components/ui";
+import { SectionHeading, Button, JsonLd } from "@/components/ui";
+import { breadcrumbSchema } from "@/lib/seo/schema";
 import { PlacesCarousel } from "@/components/destinations/PlacesCarousel";
 import { getTourBySlug } from "@/lib/data/tours";
 import {
@@ -55,6 +56,7 @@ export default async function DestinationDetailPage({ params }: Props) {
 
   return (
     <div className="bg-white">
+      <JsonLd data={breadcrumbSchema([["Destinations", "/destinations"], [dest.name, `/destinations/${dest.slug}`]])} />
       {/* Hero */}
       <section className="relative h-[min(72vh,560px)] w-full overflow-hidden">
         <Image

@@ -14,7 +14,7 @@ export default function AboutPage() {
   return (
     <div className="py-16 px-4">
       <div className="mx-auto max-w-3xl">
-        <SectionHeading
+        <SectionHeading as="h1"
           eyebrow="À propos"
           title={`${siteConfig.founder.name} — ${siteConfig.founder.title}`}
         />
