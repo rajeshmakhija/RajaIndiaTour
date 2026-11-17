@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props) {
   const dest = getDestinationBySlug(slug);
   if (!dest) return {};
   return createMetadata({
-    title: `${dest.name} — circuits sur mesure`,
+    title: dest.seoTitle ?? `${dest.name} — circuits sur mesure`,
     description: `${dest.tagline}. Découvrez ${dest.name} avec Raja : itinéraires personnalisés, guide francophone et photos de voyage.`,
     path: `/destinations/${dest.slug}`,
   });

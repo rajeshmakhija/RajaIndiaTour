@@ -7,6 +7,8 @@ export interface BlogPost {
   readTime: string;
   image: string;
   content: string[];
+  /** Optional data tables shown after the text (e.g. month-by-month seasons). */
+  tables?: { caption: string; headers: string[]; rows: string[][] }[];
   /** Internal links shown under the article ("Pour aller plus loin"). */
   links?: { href: string; label: string }[];
 }
@@ -114,10 +116,10 @@ export const blogPosts: BlogPost[] = [
       "Raja organise ce voyage en privé, avec chauffeur et guides locaux francophones lorsque c'est possible, et un rythme qui évite les longues journées de route entre deux temples.",
     ],
     links: [
-      { href: "/blog/circuit-inde-du-sud", label: "Circuit Inde du Sud : l'itinéraire" },
+      { href: "/blog/circuit-inde-du-sud", label: "Itinéraire en Inde du Sud" },
       { href: "/circuits/tour-inde-du-sud-14-jours", label: "Circuit Inde du Sud — 14 jours" },
       { href: "/blog/inde-du-sud-incontournables", label: "Inde du Sud : les incontournables" },
-      { href: "/destinations/sud", label: "Destination Inde du Sud" },
+      { href: "/destinations/sud", label: "Circuit Inde du Sud sur mesure" },
     ],
   },
   {
@@ -142,7 +144,7 @@ export const blogPosts: BlogPost[] = [
     links: [
       { href: "/destinations/kerala", label: "Destination Kerala" },
       { href: "/circuits/tour-inde-du-sud-14-jours", label: "Circuit Inde du Sud — 14 jours" },
-      { href: "/blog/circuit-inde-du-sud", label: "Circuit Inde du Sud : l'itinéraire" },
+      { href: "/blog/circuit-inde-du-sud", label: "Itinéraire en Inde du Sud" },
       { href: "/voyages/voyage-de-noces-inde", label: "Voyage de noces en Inde" },
     ],
   },
@@ -168,13 +170,13 @@ export const blogPosts: BlogPost[] = [
     links: [
       { href: "/circuits/tour-inde-du-sud-goa-20-jours", label: "Du Tamil Nadu à Goa — 20 jours" },
       { href: "/blog/inde-du-sud-incontournables", label: "Inde du Sud : les incontournables" },
-      { href: "/destinations/sud", label: "Destination Inde du Sud" },
+      { href: "/destinations/sud", label: "Circuit Inde du Sud sur mesure" },
       { href: "/destinations/goa", label: "Destination Goa" },
     ],
   },
   {
     slug: "circuit-inde-du-nord",
-    title: "Circuit Inde du Nord : itinéraire en 2 ou 3 semaines",
+    title: "Itinéraire en Inde du Nord : le parcours idéal en 2 ou 3 semaines",
     excerpt:
       "Rajasthan, Taj Mahal, Khajuraho et Varanasi : comment construire un circuit en Inde du Nord, combien de jours prévoir et quand partir.",
     date: "13 novembre 2026",
@@ -194,10 +196,10 @@ export const blogPosts: BlogPost[] = [
       "Raja, guide francophone agréé depuis 25 ans, organise ce circuit en privé : chauffeur, guides francophones dans les villes et hébergements de caractère, avec un itinéraire entièrement modulable.",
     ],
     links: [
+      { href: "/destinations/nord", label: "Circuit Inde du Nord sur mesure" },
       { href: "/circuits/tour-inde-du-nord-16-jours", label: "Circuit Inde du Nord — 16 jours" },
-      { href: "/destinations/nord", label: "Destination Inde du Nord" },
       { href: "/blog/inde-du-nord-incontournables", label: "Inde du Nord : les incontournables" },
-      { href: "/blog/circuit-rajasthan", label: "Circuit Rajasthan : quel itinéraire ?" },
+      { href: "/blog/circuit-rajasthan", label: "Itinéraire au Rajasthan : 8, 12 ou 16 jours" },
     ],
   },
   {
@@ -224,8 +226,8 @@ export const blogPosts: BlogPost[] = [
       "Comment tout combiner ? Les étapes 1 à 5 et 8 forment la boucle classique du Rajasthan et du Triangle d'Or. Khajuraho et Varanasi s'ajoutent en fin de circuit, Amritsar en extension depuis Delhi. Raja adapte l'ordre des étapes à vos dates pour limiter les longues journées de route.",
     ],
     links: [
-      { href: "/blog/circuit-inde-du-nord", label: "Circuit Inde du Nord : l'itinéraire" },
-      { href: "/destinations/nord", label: "Destination Inde du Nord" },
+      { href: "/blog/circuit-inde-du-nord", label: "Itinéraire en Inde du Nord" },
+      { href: "/destinations/nord", label: "Circuit Inde du Nord sur mesure" },
       { href: "/circuits/tour-inde-du-nord-16-jours", label: "Circuit Inde du Nord — 16 jours" },
       { href: "/blog/safari-tigre-inde", label: "Safari tigre en Inde" },
     ],
@@ -259,7 +261,7 @@ export const blogPosts: BlogPost[] = [
   },
   {
     slug: "circuit-inde-du-sud",
-    title: "Circuit Inde du Sud : l'itinéraire idéal en 2 ou 3 semaines",
+    title: "Itinéraire en Inde du Sud : le parcours idéal en 2 ou 3 semaines",
     excerpt:
       "Tamil Nadu, Kerala, Karnataka : comment construire un circuit en Inde du Sud, quelle durée prévoir et à quelle saison partir.",
     date: "13 novembre 2026",
@@ -279,9 +281,9 @@ export const blogPosts: BlogPost[] = [
       "Raja, guide francophone agréé depuis 25 ans, construit ces circuits sur mesure avec chauffeur privé, guides locaux francophones lorsque c'est possible et hébergements de caractère. Les deux itinéraires ci-dessous servent de point de départ : ils s'adaptent à vos dates, à votre rythme et à vos envies.",
     ],
     links: [
+      { href: "/destinations/sud", label: "Circuit Inde du Sud sur mesure" },
       { href: "/circuits/tour-inde-du-sud-14-jours", label: "Circuit Inde du Sud — 14 jours" },
       { href: "/circuits/tour-inde-du-sud-goa-20-jours", label: "Du Tamil Nadu à Goa — 20 jours" },
-      { href: "/destinations/sud", label: "Destination Inde du Sud" },
       { href: "/destinations/kerala", label: "Destination Kerala" },
     ],
   },
@@ -309,7 +311,7 @@ export const blogPosts: BlogPost[] = [
       "Comment tout combiner ? Les étapes 1 à 7 forment un circuit classique de deux semaines entre Chennai et Cochin. Hampi, Mysore et Goa demandent une semaine de plus. Raja adapte l'ordre des étapes à la saison et à vos dates pour limiter les longues journées de route.",
     ],
     links: [
-      { href: "/destinations/sud", label: "Destination Inde du Sud" },
+      { href: "/destinations/sud", label: "Circuit Inde du Sud sur mesure" },
       { href: "/circuits/tour-inde-du-sud-14-jours", label: "Circuit Inde du Sud — 14 jours" },
       { href: "/circuits/tour-inde-du-sud-goa-20-jours", label: "Du Tamil Nadu à Goa — 20 jours" },
       { href: "/destinations/goa", label: "Destination Goa" },
@@ -337,14 +339,14 @@ export const blogPosts: BlogPost[] = [
     ],
     links: [
       { href: "/destinations/madhya-pradesh", label: "Destination Madhya Pradesh" },
-      { href: "/destinations/rajasthan", label: "Destination Rajasthan" },
+      { href: "/destinations/rajasthan", label: "Circuit Rajasthan sur mesure" },
       { href: "/circuits/tour-triangle-dor-5-jours", label: "Le Triangle d'Or — 5 jours" },
       { href: "/creer-mon-itineraire", label: "Créer mon itinéraire avec safari" },
     ],
   },
   {
     slug: "circuit-rajasthan",
-    title: "Circuit Rajasthan : quel itinéraire en 8, 12 ou 16 jours ?",
+    title: "Itinéraire au Rajasthan : 8, 12 ou 16 jours, quel parcours choisir ?",
     excerpt:
       "Jaipur, Jodhpur, Udaipur, Jaisalmer : les itinéraires conseillés au Rajasthan selon votre durée de voyage, avec temps de trajet réels.",
     date: "10 novembre 2026",
@@ -364,9 +366,9 @@ export const blogPosts: BlogPost[] = [
       "Raja, guide francophone agréé, organise ces circuits sans intermédiaire : chauffeur privé, guides francophones dans les villes, havelis et palais transformés en hôtels de charme. Les itinéraires ci-dessous sont un point de départ, entièrement modulables.",
     ],
     links: [
+      { href: "/destinations/rajasthan", label: "Circuit Rajasthan sur mesure" },
       { href: "/circuits/rajasthan-classique-12-jours", label: "Rajasthan classique — 12 jours" },
       { href: "/circuits/tour-inde-du-nord-16-jours", label: "Rajasthan et Bénarès — 16 jours" },
-      { href: "/destinations/rajasthan", label: "Destination Rajasthan" },
       { href: "/guides/carte-interactive-rajasthan", label: "Carte interactive du Rajasthan" },
     ],
   },
@@ -417,12 +419,13 @@ export const blogPosts: BlogPost[] = [
     title: "Quand partir en Inde ? Les meilleures périodes par région",
     excerpt:
       "Rajasthan, Kerala, Ladakh, Varanasi… La meilleure période pour chaque région de l'Inde, les mois à éviter et les grandes fêtes à connaître.",
-    date: "15 mars 2026",
+    date: "18 novembre 2026",
     category: "Conseils voyage",
-    readTime: "8 min",
+    readTime: "10 min",
     image: "/images/destinations/places/taj-reflect.jpg",
     content: [
       "La meilleure période pour partir en Inde va d'octobre à mars pour la plupart des régions : Rajasthan, Triangle d'Or, Varanasi, Inde du Sud et Goa. L'exception est le Ladakh, dans l'Himalaya, qui se visite de juin à septembre. D'avril à juin, la chaleur devient très forte dans les plaines, et la mousson arrose une grande partie du pays de juin à septembre.",
+      "Les deux tableaux en fin d'article résument où partir chaque mois et la meilleure période pour chaque région, Népal et Bhoutan compris. Ils servent de repère : Raja ajuste toujours l'itinéraire à vos dates précises.",
       "Rajasthan et Triangle d'Or (Delhi, Agra, Jaipur) : d'octobre à mars. Les journées sont ensoleillées et douces. En décembre et janvier, les nuits sont fraîches, surtout dans le désert, et le brouillard peut retarder les départs matinaux autour de Delhi et d'Agra. Février et mars offrent un excellent compromis.",
       "Inde du Sud (Kerala, Tamil Nadu) : de décembre à mars. Le Kerala reçoit la grande mousson de juin à septembre, tandis que la côte du Tamil Nadu est plus pluvieuse d'octobre à décembre. Pour combiner les deux États, la période la plus sûre va de décembre à mars.",
       "Goa : de novembre à mars, pour la mer calme et le soleil. Pendant la mousson, la plupart des cabanes de plage ferment, mais les paysages deviennent très verts.",
@@ -433,10 +436,46 @@ export const blogPosts: BlogPost[] = [
       "Et si vous ne pouvez partir qu'en été ? Le Ladakh est alors la meilleure option. Le Rajasthan pendant la mousson a aussi son charme, avec des paysages verts et des lacs remplis à Udaipur, à condition d'accepter la chaleur humide et quelques averses.",
       "Raja adapte chaque circuit à vos dates : il vous indique les régions les plus agréables pour votre période de voyage et ajuste le rythme selon la saison.",
     ],
+    tables: [
+      {
+        caption: "Où partir en Inde selon le mois",
+        headers: ["Mois", "Où partir", "À savoir"],
+        rows: [
+          ["Janvier", "Rajasthan, Triangle d'Or, Varanasi, Kerala, Tamil Nadu, Goa, parcs à tigres", "Nuits froides dans le désert ; brouillard matinal possible à Delhi et Agra"],
+          ["Février", "Rajasthan, Triangle d'Or, Varanasi, toute l'Inde du Sud, Goa, parcs à tigres", "Un des meilleurs mois de l'année, très demandé : réserver tôt"],
+          ["Mars", "Rajasthan (début du mois), Inde du Sud, Goa, parcs à tigres ; fête de Holi", "La chaleur monte dans le Nord en fin de mois"],
+          ["Avril", "Parcs à tigres, collines de Munnar", "Plaines très chaudes ; Ladakh encore fermé"],
+          ["Mai", "Parcs à tigres (bonnes observations près des points d'eau)", "Chaleur extrême dans les plaines ; Ladakh en ouverture progressive"],
+          ["Juin", "Ladakh", "Arrivée de la mousson au Kerala et à Goa"],
+          ["Juillet", "Ladakh", "Mousson sur la plus grande partie du pays ; zones principales des parcs à tigres fermées"],
+          ["Août", "Ladakh", "Mousson ; Rajasthan vert mais chaud et humide"],
+          ["Septembre", "Ladakh (fin de saison)", "Fin de la mousson dans le Nord ; parcs à tigres fermés jusqu'au 30 septembre"],
+          ["Octobre", "Rajasthan, Triangle d'Or, Varanasi, Madhya Pradesh, réouverture des parcs ; Diwali, foire de Pushkar", "Pluies sur la côte du Tamil Nadu (octobre à décembre)"],
+          ["Novembre", "Rajasthan, Triangle d'Or, Varanasi, Kerala, Goa, Népal", "Tamil Nadu encore pluvieux"],
+          ["Décembre", "Tout le Nord, Kerala, Goa, Tamil Nadu en fin de mois", "Fêtes de fin d'année : prix plus élevés, réserver plusieurs mois à l'avance"],
+        ],
+      },
+      {
+        caption: "Meilleure période par région",
+        headers: ["Région", "Meilleure période", "À éviter"],
+        rows: [
+          ["Rajasthan et Triangle d'Or", "Octobre à mars", "Avril à juin (plus de 40 °C)"],
+          ["Varanasi et vallée du Gange", "Octobre à mars", "Mai et juin (chaleur)"],
+          ["Madhya Pradesh (Khajuraho, Orchha)", "Octobre à mars", "Avril à juin"],
+          ["Parcs à tigres", "Octobre à juin (mars à mai pour les observations)", "1er juillet au 30 septembre (zones principales fermées)"],
+          ["Kerala", "Novembre à février", "Juin à septembre (grande mousson)"],
+          ["Tamil Nadu", "Décembre à mars", "Octobre à décembre sur la côte (pluies)"],
+          ["Goa", "Novembre à mars", "Juin à septembre"],
+          ["Ladakh", "Juin à septembre", "Novembre à avril (routes fermées, grand froid)"],
+          ["Népal", "Octobre-novembre et mars-avril", "Juin à septembre (mousson)"],
+          ["Bhoutan", "Mars à mai et septembre à novembre", "Juin à août"],
+        ],
+      },
+    ],
     links: [
       { href: "/guides/calendrier-voyage-inde", label: "Calendrier du voyage en Inde mois par mois" },
-      { href: "/blog/circuit-rajasthan", label: "Circuit Rajasthan : quel itinéraire ?" },
-      { href: "/blog/circuit-inde-du-sud", label: "Circuit Inde du Sud : l'itinéraire idéal" },
+      { href: "/blog/circuit-rajasthan", label: "Itinéraire au Rajasthan : 8, 12 ou 16 jours" },
+      { href: "/blog/circuit-inde-du-sud", label: "Itinéraire en Inde du Sud" },
       { href: "/blog/safari-tigre-inde", label: "Safari tigre : quand partir ?" },
     ],
   },
@@ -464,7 +503,7 @@ export const blogPosts: BlogPost[] = [
     ],
     links: [
       { href: "/creer-mon-itineraire", label: "Demander un devis détaillé" },
-      { href: "/blog/circuit-rajasthan", label: "Circuit Rajasthan : quel itinéraire ?" },
+      { href: "/blog/circuit-rajasthan", label: "Itinéraire au Rajasthan : 8, 12 ou 16 jours" },
       { href: "/blog/visa-inde-voyageurs-francais", label: "Visa Inde : mode d'emploi" },
       { href: "/blog/quand-partir-en-inde", label: "Quand partir en Inde ?" },
     ],
@@ -515,9 +554,9 @@ export const blogPosts: BlogPost[] = [
       "Raja, guide francophone agréé par le ministère du Tourisme indien depuis 25 ans, organise lui-même ces circuits : il choisit les guides locaux de chaque ville, prépare l'itinéraire avec les temps de trajet réels et reste joignable pendant tout le voyage.",
     ],
     links: [
-      { href: "/blog/circuit-rajasthan", label: "Circuit Rajasthan : quel itinéraire en 8, 12 ou 16 jours ?" },
+      { href: "/blog/circuit-rajasthan", label: "Itinéraire au Rajasthan : 8, 12 ou 16 jours" },
       { href: "/circuits/rajasthan-classique-12-jours", label: "Rajasthan classique — 12 jours" },
-      { href: "/destinations/rajasthan", label: "Destination Rajasthan" },
+      { href: "/destinations/rajasthan", label: "Circuit Rajasthan sur mesure" },
       { href: "/voyages/circuit-prive-inde-avec-chauffeur", label: "Circuit privé avec chauffeur" },
     ],
   },
@@ -569,7 +608,7 @@ export const blogPosts: BlogPost[] = [
     links: [
       { href: "/destinations/varanasi", label: "Destination Varanasi" },
       { href: "/circuits/tour-inde-du-nord-16-jours", label: "Rajasthan et Bénarès — 16 jours" },
-      { href: "/blog/circuit-rajasthan", label: "Circuit Rajasthan : quel itinéraire ?" },
+      { href: "/blog/circuit-rajasthan", label: "Itinéraire au Rajasthan : 8, 12 ou 16 jours" },
       { href: "/blog/quand-partir-en-inde", label: "Quand partir en Inde ?" },
     ],
   },

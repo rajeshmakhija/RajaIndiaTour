@@ -53,7 +53,7 @@ export const travelGuides: TravelGuide[] = [
   },
   {
     slug: "calendrier-voyage-inde",
-    title: "Quand partir en Inde ? Le calendrier mois par mois",
+    title: "Calendrier : où partir en Inde selon le mois",
     shortTitle: "Choisir le bon mois",
     description:
       "Un calendrier interactif pour choisir la région de l'Inde qui correspond à votre mois de départ, à votre climat idéal et à votre manière de voyager.",

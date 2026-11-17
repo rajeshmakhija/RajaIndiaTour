@@ -18,6 +18,8 @@ export interface DestinationPlace {
 export interface DestinationPage {
   slug: string;
   name: string;
+  /** Search-result title (<title>); the visible H1 stays `name`. */
+  seoTitle?: string;
   tagline: string;
   heroImage: string;
   gallery: { src: string; alt: string }[];
@@ -43,6 +45,7 @@ export const destinationPages: DestinationPage[] = [
   {
     slug: "rajasthan",
     name: "Rajasthan",
+    seoTitle: "Circuit Rajasthan sur mesure avec chauffeur et guide francophone",
     tagline: "Palais, désert du Thar et cités royales",
     heroImage: "/images/destinations/rajasthan.jpg",
     gallery: [
@@ -161,6 +164,7 @@ export const destinationPages: DestinationPage[] = [
   {
     slug: "ladakh",
     name: "Ladakh",
+    seoTitle: "Voyage au Ladakh sur mesure : circuit privé avec guide francophone",
     tagline: "Himalaya, monastères et paysages lunaires",
     heroImage: "/images/destinations/ladakh.jpg",
     gallery: [
@@ -273,6 +277,7 @@ export const destinationPages: DestinationPage[] = [
   {
     slug: "nord",
     name: "L'Inde du Nord",
+    seoTitle: "Circuit Inde du Nord sur mesure : Rajasthan, Taj Mahal, Varanasi",
     tagline: "Delhi, Taj Mahal et trésors du nord indien",
     heroImage: "/images/destinations/nord.jpg",
     gallery: [
@@ -398,6 +403,7 @@ export const destinationPages: DestinationPage[] = [
   {
     slug: "sud",
     name: "L'Inde du Sud",
+    seoTitle: "Circuit Inde du Sud sur mesure : Tamil Nadu, Kerala, Karnataka",
     tagline: "Kerala, Tamil Nadu et backwaters tropicaux",
     heroImage: "/images/destinations/sud.jpg",
     gallery: [
@@ -516,6 +522,7 @@ export const destinationPages: DestinationPage[] = [
   {
     slug: "madhya-pradesh",
     name: "Madhya Pradesh",
+    seoTitle: "Voyage Madhya Pradesh : Khajuraho, Orchha et safaris tigres",
     tagline: "Cœur de l'Inde — temples, forêts et patrimoine",
     heroImage: "/images/destinations/place-jaipur.jpg",
     gallery: [
@@ -610,6 +617,7 @@ export const destinationPages: DestinationPage[] = [
   {
     slug: "nepal",
     name: "Népal",
+    seoTitle: "Voyage au Népal sur mesure avec guide francophone",
     tagline: "Kathmandou, Annapurna et Himalaya népalais",
     heroImage: "/images/destinations/nepal.jpg",
     gallery: [
@@ -716,6 +724,7 @@ export const destinationPages: DestinationPage[] = [
   {
     slug: "bhoutan",
     name: "Bhoutan",
+    seoTitle: "Voyage au Bhoutan sur mesure : circuit privé",
     tagline: "Dzongs, monastères et Bonheur National Brut",
     heroImage: "/images/destinations/bhoutan.jpg",
     gallery: [
@@ -810,6 +819,7 @@ export const destinationPages: DestinationPage[] = [
   {
     slug: "kerala",
     name: "Kerala",
+    seoTitle: "Voyage au Kerala sur mesure : backwaters, Munnar, plages",
     tagline: "Backwaters, plages et nature tropicale",
     heroImage: "/images/destinations/kerala.jpg",
     gallery: [
@@ -916,6 +926,7 @@ export const destinationPages: DestinationPage[] = [
   {
     slug: "goa",
     name: "Goa",
+    seoTitle: "Voyage à Goa : plages et extension de circuit en Inde",
     tagline: "Plages, héritage portugais et détente",
     heroImage: "/images/destinations/goa.jpg",
     gallery: [
@@ -1014,6 +1025,7 @@ export const destinationPages: DestinationPage[] = [
   {
     slug: "triangle-dor",
     name: "Triangle d'Or",
+    seoTitle: "Circuit Triangle d'Or en Inde : Delhi, Agra, Jaipur en privé",
     tagline: "Delhi, Agra, Jaipur — le classique incontournable",
     heroImage: "/images/destinations/triangle-dor.jpg",
     gallery: [
@@ -1126,6 +1138,7 @@ export const destinationPages: DestinationPage[] = [
   {
     slug: "varanasi",
     name: "Varanasi",
+    seoTitle: "Voyage à Varanasi (Bénarès) : ghats du Gange avec guide",
     tagline: "Spiritualité et ghats du Gange",
     heroImage: "/images/destinations/varanasi.jpg",
     gallery: [

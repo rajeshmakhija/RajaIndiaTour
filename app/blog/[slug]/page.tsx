@@ -115,6 +115,36 @@ export default async function BlogPostPage({ params }: Props) {
           ))}
         </div>
 
+        {post.tables?.map((table) => (
+          <div key={table.caption} className="mt-10 overflow-x-auto rounded-xl border border-cream-dark">
+            <table className="w-full min-w-[560px] border-collapse text-left text-sm">
+              <caption className="bg-brand-blue px-4 py-3 text-left font-display text-lg font-bold text-white">
+                {table.caption}
+              </caption>
+              <thead className="bg-cream-dark/40 text-xs uppercase tracking-wide text-brand-blue">
+                <tr>
+                  {table.headers.map((h) => (
+                    <th key={h} scope="col" className="px-4 py-3 font-semibold">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {table.rows.map((row) => (
+                  <tr key={row[0]} className="border-t border-cream-dark align-top">
+                    {row.map((cell, i) =>
+                      i === 0 ? (
+                        <th key={i} scope="row" className="px-4 py-3 font-semibold text-ink">{cell}</th>
+                      ) : (
+                        <td key={i} className="px-4 py-3 text-muted">{cell}</td>
+                      )
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))}
+
         {post.links?.length ? (
           <nav aria-label="Pour aller plus loin" className="mt-10 border-t border-cream-dark pt-6">
             <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-brand-blue">Pour aller plus loin</p>

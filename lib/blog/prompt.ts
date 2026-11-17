@@ -63,12 +63,19 @@ export const TOPIC_IDEAS = [
   "Assister à un festival indien : Holi, Diwali, Pushkar",
   "Le Kerala en famille : rythme, étapes et conseils",
   "Préparer sa valise pour un voyage au Ladakh",
-  // Month-by-month intent (Kuoni-style "où partir en…"), India-specific.
-  ...["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"].map(
-    (month) => `Partir en Inde en ${month}`
-  ),
-  "Voyage de noces en Inde : itinéraire romantique et conseils",
-  "Circuit privé en Inde avec chauffeur : comment ça marche ?",
+  // City/site guides: real search demand, not yet covered by the static posts.
+  "Que voir à Jaipur en 2 jours",
+  "Que faire à Udaipur : la ville des lacs",
+  "Que voir à Jodhpur, la ville bleue",
+  "Jaisalmer et le désert du Thar : que faire",
+  "Que voir à Delhi en 2 jours",
+  "Agra au-delà du Taj Mahal : que voir",
+  "Que voir à Cochin (Kochi) au Kerala",
+  "Munnar : plantations de thé et randonnées",
+  "Pondichéry : que voir dans l'ancien comptoir français",
+  "Khajuraho : visiter les temples",
+  "Amritsar et le Temple d'Or : guide de visite",
+  "Que faire à Goa en dehors des plages",
   "Voyage en Inde pour seniors : rythme, confort et conseils",
 ];
 
