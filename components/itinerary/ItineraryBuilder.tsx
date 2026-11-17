@@ -231,13 +231,19 @@ export function ItineraryBuilder() {
     }));
   };
 
-  const goNext = () => {
-    if (step === 1 && (data.interests.length === 0 || data.regions.length === 0)) {
-      setError("Choisissez au moins un centre d'intérêt et une région.");
-      return;
+  /** Why step `n` can't be left yet, or "" when it is complete. */
+  const stepError = (n: number) => {
+    if (n === 1 && (data.interests.length === 0 || data.regions.length === 0)) {
+      return "Choisissez au moins un centre d'intérêt et une région.";
     }
-    if (step === 2 && data.lodging.length === 0) {
-      setError("Choisissez au moins un type d'hébergement.");
+    if (n === 2 && data.lodging.length === 0) return "Choisissez au moins un type d'hébergement.";
+    return "";
+  };
+
+  const goNext = () => {
+    const blocked = stepError(step);
+    if (blocked) {
+      setError(blocked);
       return;
     }
     if (step === 1) {
@@ -249,6 +255,24 @@ export function ItineraryBuilder() {
     }
     setError("");
     setStep((s) => Math.min(3, s + 1));
+    keepFormInView();
+  };
+
+  /** Stepper click: back is always allowed; forward only through completed steps. */
+  const goTo = (target: number) => {
+    if (target === step) return;
+    if (target > step) {
+      for (let n = step; n < target; n++) {
+        const blocked = stepError(n);
+        if (blocked) {
+          setStep(n);
+          setError(blocked);
+          return;
+        }
+      }
+    }
+    setError("");
+    setStep(target);
     keepFormInView();
   };
 
@@ -336,9 +360,12 @@ export function ItineraryBuilder() {
       {/* Stepper */}
       <div className="grid grid-cols-3 bg-brand-blue">
         {STEPS.map((s) => (
-          <div
+          <button
+            type="button"
             key={s.num}
-            className={`px-2 py-4 text-center transition-colors md:px-4 ${
+            onClick={() => goTo(s.num)}
+            aria-current={step === s.num ? "step" : undefined}
+            className={`cursor-pointer px-2 py-4 text-center transition-colors hover:bg-brand-red/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-white md:px-4 ${
               step === s.num ? "bg-brand-red" : "bg-brand-blue"
             }`}
           >
@@ -346,7 +373,7 @@ export function ItineraryBuilder() {
               Étape {s.num}
             </p>
             <p className="mt-0.5 text-xs font-bold text-white md:text-sm">{s.title}</p>
-          </div>
+          </button>
         ))}
       </div>
 
