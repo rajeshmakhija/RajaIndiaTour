@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/lib/site";
-import { getAllPosts } from "@/lib/blog/posts";
+import { getAllPosts, postIsoDate } from "@/lib/blog/posts";
 import { getAllDestinationSlugs } from "@/lib/data/destinations";
 import { getAllTourSlugs } from "@/lib/data/tours";
 import { getAllGuideSlugs } from "@/lib/data/guides";
@@ -13,12 +13,13 @@ type Entry = {
   path: string;
   changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
   priority: number;
+  /** Real last change; omitted when unknown (a fake "now" teaches Google to ignore lastmod). */
+  lastModified?: string;
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const blogPosts = await getAllPosts();
   const base = siteConfig.url;
-  const now = new Date();
 
   const entries: Entry[] = [
     { path: "", changeFrequency: "weekly", priority: 1 },
@@ -53,12 +54,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       path: `/blog/${post.slug}`,
       changeFrequency: "monthly" as const,
       priority: 0.7,
+      lastModified: ("updatedAt" in post && typeof post.updatedAt === "string" ? post.updatedAt : undefined) ?? postIsoDate(post),
     })),
   ];
 
-  return entries.map(({ path, changeFrequency, priority }) => ({
+  return entries.map(({ path, changeFrequency, priority, lastModified }) => ({
     url: `${base}${path}`,
-    lastModified: now,
+    ...(lastModified ? { lastModified } : {}),
     changeFrequency,
     priority,
   }));
